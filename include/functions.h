@@ -119,11 +119,22 @@ void MotorStop()
 
 void ClawControl()
 {
-  if(Controller1.ButtonL1.pressing())
+ /*if(Controller1.ButtonL1.pressing())
   {
     Clawmotor.spin(vex::directionType::fwd, 30, vex::velocityUnits::pct);
   } else
   { 
-    Clawmotor.spin(vex::directionType::fwd, -100, vex::velocityUnits::pct);
+    //Clawmotor.spin(vex::directionType::fwd, -100, vex::velocityUnits::pct);
+  }
+  */
+  if(Controller1.ButtonL1.pressing())
+  {
+    Clawmotor.spin(vex::directionType::fwd, 10, vex::velocityUnits::pct);
+  } else if(Controller1.ButtonL2.pressing())
+  {
+    Clawmotor.spin(vex::directionType::fwd, -10, velocityUnits::pct);
+  } else 
+  {
+    Clawmotor.stop();
   }
 }

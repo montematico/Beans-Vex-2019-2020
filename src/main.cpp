@@ -1,3 +1,20 @@
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// BLimitSwitch         limit         B               
+// TLimitSwitch         limit         C               
+// Gyro                 gyro          A               
+// FL                   motor         6               
+// BL                   motor         7               
+// BR                   motor         8               
+// FR                   motor         9               
+// Rlift                motor         11              
+// Llift                motor         12              
+// Controller1          controller                    
+// IdiotSwitch          bumper        H               
+// Clawmotor            motor         13              
+// Pot                  pot           D               
+// ---- END VEXCODE CONFIGURED DEVICES ----
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
@@ -93,6 +110,7 @@ void usercontrol(void) {
     DriveTrain(true);
     Lcontrol();
     ClawControl();
+    std::cout<<Pot.angle(rotationUnits::deg)<<std::endl;
     // ........................................................................
     // Insert user code here. This is where you use the joystick values to
     // update your motors, etc.
