@@ -17,6 +17,11 @@
 #include "v5_vcs.h"
 #include <strings.h>
 #include "robot-config.h"
+//dont have to put std:: infront of all console commmands
+using std::cout;
+using std::endl;
+using std::string;
+
 
 #define waitUntil(condition)                                                   \
   do {                                                                         \

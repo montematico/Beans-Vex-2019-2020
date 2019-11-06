@@ -127,3 +127,4 @@ void ClawControl()
     Clawmotor.spin(vex::directionType::fwd, -100, vex::velocityUnits::pct);
   }
 }
+string test = "five";
