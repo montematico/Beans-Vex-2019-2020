@@ -120,36 +120,55 @@ void MotorStop()
 
 void ClawControl()
 {
-  float opened = 0; //Pot values when opened
-  float closed = 0; //When Closed
+  float opened = 30; //Pot values when opened
+  float closed = 55; //When Closed
   float spalyed = 0; //When opened all the way, kindof usuless but could be useful later for easier calibration.
-  char status = 'd'; //Status of claw, c,o,d (close, open, done)
+  string status = "test"; //Status of claw, c,o,d (close, open, done)
   float degerror = 5.0; //Acceptable degrees of error in the pot
   float Pote = Pot.angle(rotationUnits::deg); // reads pot value. here because of laziness
   int speed = 30; //sets speed of motors.
 
   //Sets Status
-  if(Controller1.ButtonL1.pressing())
+  if(Controller1.ButtonL1.pressing() && status != "opendone")
   {
-    status = 'o';
-  } else if(Controller1.ButtonL2.pressing())
+    status = "opening";
+  } else if(Controller1.ButtonL2.pressing() && status != "closeddone")
   {
-    status = 'c';
+    status = "closing";
   }
   //Tells motors to spin whens status is appropiate
-  if(status == 'o')
+  if(status == "opening")
   {
     Clawmotor.spin(vex::directionType::fwd, speed, vex::velocityUnits::rpm);
-  } else if(status == 'c')
+  } else if(status == "closing")
   {
-    Clawmotor.spin(vex::directionType::fwd, (-1 * speed), vex::velocityUnits::rpm);
+    Clawmotor.spin(vex::directionType::rev, speed, vex::velocityUnits::rpm);
   }
   //Tells motors to stop when they are in the correct position
-  if(fabsf(opened - Pote) <= degerror || fabsf(closed - Pote) <= degerror)
+  degerror /= 2; //divides degerror by 2 so its x degrees total rather than x degrees in either direction.
+
+  if(fabsf(opened - Pote) <= degerror)
   {
-    status = 'd';
+    status = "opendone";
     Clawmotor.stop();
+  } else if(fabsf(closed - Pote) <= degerror)
+  {
+    status = "closedone";
+    //dont stop the motor so the cubes have constant pressure.
   }
 
+  
+  /*When I need to manually control claw
+   if(Controller1.ButtonL1.pressing())
+  {
+    Clawmotor.spin(vex::directionType::fwd, 10, vex::velocityUnits::rpm);
+  } else if(Controller1.ButtonL2.pressing())
+  {
+    Clawmotor.spin(vex::directionType::fwd, -10, vex::velocityUnits::rpm);
+  } else
+  {
+    Clawmotor.stop();
+  } 
+  */
 
 }
