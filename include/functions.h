@@ -115,26 +115,41 @@ void MotorStop()
   FR.stop();
   Rlift.stop();
   Llift.stop();
+  Clawmotor.stop();
 }
 
 void ClawControl()
 {
- /*if(Controller1.ButtonL1.pressing())
-  {
-    Clawmotor.spin(vex::directionType::fwd, 30, vex::velocityUnits::pct);
-  } else
-  { 
-    //Clawmotor.spin(vex::directionType::fwd, -100, vex::velocityUnits::pct);
-  }
-  */
+  float opened = 0; //Pot values when opened
+  float closed = 0; //When Closed
+  float spalyed = 0; //When opened all the way, kindof usuless but could be useful later for easier calibration.
+  char status = 'd'; //Status of claw, c,o,d (close, open, done)
+  float degerror = 5.0; //Acceptable degrees of error in the pot
+  float Pote = Pot.angle(rotationUnits::deg); // reads pot value. here because of laziness
+  int speed = 30; //sets speed of motors.
+
+  //Sets Status
   if(Controller1.ButtonL1.pressing())
   {
-    Clawmotor.spin(vex::directionType::fwd, 10, vex::velocityUnits::pct);
+    status = 'o';
   } else if(Controller1.ButtonL2.pressing())
   {
-    Clawmotor.spin(vex::directionType::fwd, -10, velocityUnits::pct);
-  } else 
+    status = 'c';
+  }
+  //Tells motors to spin whens status is appropiate
+  if(status == 'o')
   {
+    Clawmotor.spin(vex::directionType::fwd, speed, vex::velocityUnits::rpm);
+  } else if(status == 'c')
+  {
+    Clawmotor.spin(vex::directionType::fwd, (-1 * speed), vex::velocityUnits::rpm);
+  }
+  //Tells motors to stop when they are in the correct position
+  if(fabsf(opened - Pote) <= degerror || fabsf(closed - Pote) <= degerror)
+  {
+    status = 'd';
     Clawmotor.stop();
   }
+
+
 }

@@ -81,10 +81,6 @@ Discarded input sections
                 0x00000000       0x54 build/src/main.o
  .ARM.exidx.text._Z9MotorStopv
                 0x00000000        0x8 build/src/main.o
- .text._Z9Clawsensev
-                0x00000000       0x28 build/src/main.o
- .ARM.exidx.text._Z9Clawsensev
-                0x00000000        0x8 build/src/main.o
  .text._Z9pre_autonv
                 0x00000000       0x14 build/src/main.o
  .ARM.exidx.text._Z9pre_autonv
@@ -1980,14 +1976,15 @@ Linker script and memory map
                 0x03800740       0xbc build/src/main.o
                 0x03800740                Gcode()
  .text._Z11ClawControlv
-                0x038007fc       0x78 build/src/main.o
+                0x038007fc       0x74 build/src/main.o
                 0x038007fc                ClawControl()
  .text._Z10autonomousv
-                0x03800874        0x4 build/src/main.o
-                0x03800874                autonomous()
+                0x03800870        0x4 build/src/main.o
+                0x03800870                autonomous()
  .text._Z11usercontrolv
-                0x03800878       0xd0 build/src/main.o
-                0x03800878                usercontrol()
+                0x03800874       0xd0 build/src/main.o
+                0x03800874                usercontrol()
+ *fill*         0x03800944        0x4 
  .text.main     0x03800948       0x68 build/src/main.o
                 0x03800948                main
  .text._GLOBAL__sub_I_main.cpp
