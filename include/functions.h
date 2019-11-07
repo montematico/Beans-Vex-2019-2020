@@ -128,36 +128,19 @@ void ClawControl()
   float Pote = Pot.angle(rotationUnits::deg); // reads pot value. here because of laziness
   int speed = 30; //sets speed of motors.
 
-  //Sets Status
-  if(Controller1.ButtonL1.pressing() && status != "opendone")
-  {
-    status = "opening";
-  } else if(Controller1.ButtonL2.pressing() && status != "closeddone")
-  {
-    status = "closing";
-  }
-  //Tells motors to spin whens status is appropiate
-  if(status == "opening")
+  
+  if(Controller1.ButtonL1.pressing() && fabsf(opened - Pote) <= degerror)
   {
     Clawmotor.spin(vex::directionType::fwd, speed, vex::velocityUnits::rpm);
-  } else if(status == "closing")
+  } else if(Controller1.ButtonL2.pressing() && fabsf(opened - Pote) <= degerror)
   {
     Clawmotor.spin(vex::directionType::rev, speed, vex::velocityUnits::rpm);
-  }
-  //Tells motors to stop when they are in the correct position
-  degerror /= 2; //divides degerror by 2 so its x degrees total rather than x degrees in either direction.
-
-  if(fabsf(opened - Pote) <= degerror)
+  } else 
   {
-    status = "opendone";
     Clawmotor.stop();
-  } else if(fabsf(closed - Pote) <= degerror)
-  {
-    status = "closedone";
-    //dont stop the motor so the cubes have constant pressure.
   }
 
-  
+  */
   /*When I need to manually control claw
    if(Controller1.ButtonL1.pressing())
   {
@@ -170,5 +153,4 @@ void ClawControl()
     Clawmotor.stop();
   } 
   */
-
 }

@@ -97,6 +97,7 @@ void autonomous(void) {
 /*---------------------------------------------------------------------------*/
 
 void usercontrol(void) {
+  
   // User control code here, inside the loop
   while (1) {
     // This is the main execution loop for the user control program.
@@ -110,8 +111,8 @@ void usercontrol(void) {
     DriveTrain(true);
     Lcontrol();
     ClawControl();
-    std::cout<<Pot.angle(rotationUnits::deg)<<std::endl;
-    std::cout<<Clawmotor.isSpinning()<<std::endl;
+    //std::cout<<Pot.angle(rotationUnits::deg)<<std::endl;
+    //std::cout<<Clawmotor.isSpinning()<<std::endl;
     // ........................................................................
     // Insert user code here. This is where you use the joystick values to
     // update your motors, etc.
@@ -119,13 +120,16 @@ void usercontrol(void) {
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
+                    
   }
 }
 
 //
 // Main will set up the competition functions and callbacks.
 //
-int main() {
+int main() 
+{
+  
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
@@ -137,4 +141,5 @@ int main() {
   while (true) {
     wait(100, msec);
   }
+  
 }
