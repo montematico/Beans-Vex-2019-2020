@@ -123,7 +123,7 @@ void autonomous(void) {
   Autoclaw('c');
   std::cout<<"Cube Grabbed, lifting"<<std::endl;
   wait(1,sec);
-  DLcontrol(-100);
+  DLcontrol(-60);
   wait(2,sec);
   DLcontrol(0);
 }
