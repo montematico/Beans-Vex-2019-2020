@@ -32,15 +32,6 @@ void Pgo(int pw, int ti) {
 }
 
 void Startup() {
-  // Sets motor settings
-  Clawmotor.setMaxTorque(25.00, percentUnits::pct);
-  Llift.setStopping(hold);
-  Rlift.setStopping(hold);
-  BL.setStopping(coast);
-  BR.setStopping(coast);
-  FL.setStopping(coast);
-  FR.setStopping(coast);
-  Clawmotor.setStopping(coast);
 
   // Calibrates Gyro
   Controller1.Screen.clearScreen();
@@ -59,6 +50,19 @@ void Startup() {
   Controller1.rumble("..");
   vex::task::sleep(300);
 }
+void motorset()
+{
+  // Sets motor settings
+  Clawmotor.setMaxTorque(25.00, percentUnits::pct);
+  Llift.setStopping(hold);
+  Rlift.setStopping(hold);
+  BL.setStopping(coast);
+  BR.setStopping(coast);
+  FL.setStopping(coast);
+  FR.setStopping(coast);
+  Clawmotor.setStopping(coast);
+}
+
 
 void go(int dir, int pwr, int) {
   int Goff = 0; // nonfunctional maybe later

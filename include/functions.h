@@ -76,6 +76,7 @@ void Ncheck()
 void DLcontrol(int pwr) {
   // Synchronizes motors for lift
   // uses pwr as a -100-100 integer for controlling both lift motors
+  //Also used in autonamous code to raise and lower lift.
   if (pwr != 0) {
     Llift.spin(vex::directionType::fwd, pwr, vex::velocityUnits::rpm);
     Rlift.spin(vex::directionType::fwd, pwr, vex::velocityUnits::rpm);

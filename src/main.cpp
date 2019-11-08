@@ -65,7 +65,7 @@ competition Competition;
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
- Startup();
+  //Add gui autocode selector
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
@@ -81,9 +81,15 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
-  // ..........................................................................
-  // Insert autonomous user code here.
-  // ..........................................................................
+  Startup();
+
+  //Yanks lift up and done to deploy claw.
+  DLcontrol(100); //This couldn't be its own functions because it calls DLcontrol which is in a seperate file than autofunct.h
+  wait(0.3, sec);
+  DLcontrol(-80);
+  wait(0.2, sec);
+  std::cout<<"Claw Deployed"<<std::endl;
+  Brain.Screen.printAt(1, 60, "Claw Deployed");
 }
 
 /*---------------------------------------------------------------------------*/
