@@ -111,8 +111,8 @@ void usercontrol(void) {
     DriveTrain(true);
     Lcontrol();
     ClawControl();
-    //std::cout<<Pot.angle(rotationUnits::deg)<<std::endl;
-    //std::cout<<Clawmotor.isSpinning()<<std::endl;
+    std::cout<<Pot.angle(rotationUnits::deg)<<std::endl;
+    std::cout<<Clawmotor.isSpinning()<<std::endl;
     // ........................................................................
     // Insert user code here. This is where you use the joystick values to
     // update your motors, etc.

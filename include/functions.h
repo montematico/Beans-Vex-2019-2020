@@ -128,11 +128,11 @@ void ClawControl()
   float Pote = Pot.angle(rotationUnits::deg); // reads pot value. here because of laziness
   int speed = 30; //sets speed of motors.
 
-  
-  if(Controller1.ButtonL1.pressing() && fabsf(opened - Pote) <= degerror)
+
+  if(Controller1.ButtonL1.pressing() && fabsf(Pote - opened) <= degerror) //Check if you're doing the wirhgt math here.
   {
     Clawmotor.spin(vex::directionType::fwd, speed, vex::velocityUnits::rpm);
-  } else if(Controller1.ButtonL2.pressing() && fabsf(opened - Pote) <= degerror)
+  } else if(Controller1.ButtonL2.pressing() && fabsf(Pote - opened) <= degerror)
   {
     Clawmotor.spin(vex::directionType::rev, speed, vex::velocityUnits::rpm);
   } else 
@@ -140,8 +140,8 @@ void ClawControl()
     Clawmotor.stop();
   }
 
-  */
-  /*When I need to manually control claw
+  //When I need to manually control claw
+  /*
    if(Controller1.ButtonL1.pressing())
   {
     Clawmotor.spin(vex::directionType::fwd, 10, vex::velocityUnits::rpm);

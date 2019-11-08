@@ -40,7 +40,7 @@ void Startup() {
   BR.setStopping(coast);
   FL.setStopping(coast);
   FR.setStopping(coast);
-  Clawmotor.setStopping(hold);
+  Clawmotor.setStopping(coast);
 
   // Calibrates Gyro
   Controller1.Screen.clearScreen();
