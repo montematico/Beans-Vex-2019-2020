@@ -15,6 +15,23 @@
 // Clawmotor            motor         13              
 // Pot                  pot           D               
 // ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// BLimitSwitch         limit         B               
+// TLimitSwitch         limit         C               
+// Gyro                 gyro          A               
+// FL                   motor         6               
+// BL                   motor         7               
+// BR                   motor         8               
+// FR                   motor         9               
+// Rlift                motor         11              
+// Llift                motor         12              
+// Controller1          controller                    
+// IdiotSwitch          bumper        H               
+// Clawmotor            motor         13              
+// Pot                  pot           D               
+// ---- END VEXCODE CONFIGURED DEVICES ----
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
@@ -63,6 +80,7 @@ competition Competition;
 /*---------------------------------------------------------------------------*/
 
 void pre_auton(void) {
+  motorset();
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
   //Add gui autocode selector

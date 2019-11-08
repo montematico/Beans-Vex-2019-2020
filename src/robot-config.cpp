@@ -19,7 +19,7 @@ motor Rlift = motor(PORT11, ratio36_1, false);
 motor Llift = motor(PORT12, ratio36_1, true);
 controller Controller1 = controller(primary);
 bumper IdiotSwitch = bumper(Brain.ThreeWirePort.H);
-motor Clawmotor = motor(PORT13, ratio36_1, true);
+motor Clawmotor = motor(PORT13, ratio36_1, false);
 pot Pot = pot(Brain.ThreeWirePort.D);
 
 // VEXcode generated functions

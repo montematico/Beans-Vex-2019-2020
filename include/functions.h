@@ -130,10 +130,10 @@ void ClawControl()
   int speed = 30; //sets speed of motors.
 
 
-  if(Controller1.ButtonL1.pressing() && Pote >= opened) //Check if you're doing the wirhgt math here.
+  if(Controller1.ButtonL1.pressing() && Pote <= closed) //Check if you're doing the wirhgt math here.
   {
     Clawmotor.spin(vex::directionType::fwd, speed, vex::velocityUnits::rpm);
-  } else if(Controller1.ButtonL2.pressing() && Pote <= closed)
+  } else if(Controller1.ButtonL2.pressing() && Pote <= opened)
   {
     Clawmotor.spin(vex::directionType::rev, speed, vex::velocityUnits::rpm);
   } else 
