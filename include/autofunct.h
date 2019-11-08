@@ -60,7 +60,7 @@ void motorset()
   BR.setStopping(coast);
   FL.setStopping(coast);
   FR.setStopping(coast);
-  Clawmotor.setStopping(coast);
+  Clawmotor.setStopping(hold);
 }
 
 
@@ -82,4 +82,18 @@ void go(int dir, int pwr, int) {
   BL.spin(vex::directionType::fwd, ABL, vex::velocityUnits::pct);
   FR.spin(vex::directionType::fwd, AFR, vex::velocityUnits::pct);
   BR.spin(vex::directionType::fwd, ABR, vex::velocityUnits::pct);
+}
+void Autoclaw(char x)
+{
+  float speed = 30.0;
+  if(x == 'c') //Check if you're doing the wirhgt math here.
+  {
+    Clawmotor.spin(vex::directionType::fwd, 60, vex::velocityUnits::rpm);
+  } else if(x == 'o')
+  {
+    Clawmotor.spin(vex::directionType::rev, speed, vex::velocityUnits::rpm);
+  } else if(x == 's')
+  {
+    Clawmotor.stop();
+  }
 }

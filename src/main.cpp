@@ -99,15 +99,33 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
+  std::cout<<"Autonon start"<<std::endl;
   Startup();
+  std::cout<<"Gyro Calibrated"<<std::endl;
 
   //Yanks lift up and done to deploy claw.
   DLcontrol(100); //This couldn't be its own functions because it calls DLcontrol which is in a seperate file than autofunct.h
   wait(0.3, sec);
   DLcontrol(-80);
-  wait(0.2, sec);
+  wait(2, sec);
+  DLcontrol(0);
   std::cout<<"Claw Deployed"<<std::endl;
   Brain.Screen.printAt(1, 60, "Claw Deployed");
+  std::cout<<"Claw open"<<std::endl;
+  Autoclaw('o');
+  wait(0.7, sec);
+  Autoclaw('s');
+  DLcontrol(30);
+  wait(1.7, sec);
+  DLcontrol(0);
+  std::cout<<"Going for cube"<<std::endl;
+  Pgo(10, 2);
+  Autoclaw('c');
+  std::cout<<"Cube Grabbed, lifting"<<std::endl;
+  wait(1,sec);
+  DLcontrol(-100);
+  wait(2,sec);
+  DLcontrol(0);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -121,6 +139,7 @@ void autonomous(void) {
 /*---------------------------------------------------------------------------*/
 
 void usercontrol(void) {
+  motorset();
   
   // User control code here, inside the loop
   while (1) {
@@ -135,8 +154,7 @@ void usercontrol(void) {
     DriveTrain(true);
     Lcontrol();
     ClawControl();
-    std::cout<<Pot.angle(rotationUnits::deg)<<std::endl;
-    std::cout<<Clawmotor.isSpinning()<<std::endl;
+
     // ........................................................................
     // Insert user code here. This is where you use the joystick values to
     // update your motors, etc.
