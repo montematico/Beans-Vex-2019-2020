@@ -31,6 +31,21 @@ void Pgo(int pw, int ti) {
   BR.stop();
 }
 
+void Pstrafe(int pw, int ti) {
+  ti = 1000 * ti;
+  int rw = pw * -1;
+  // Precice go for autonomous pw = power (rpm) ti = time (seconds)
+  FL.spin(vex::directionType::rev, pw, vex::velocityUnits::rpm);
+  FR.spin(vex::directionType::fwd, rw, vex::velocityUnits::rpm);
+  BL.spin(vex::directionType::rev, pw, vex::velocityUnits::rpm);
+  BR.spin(vex::directionType::fwd, rw, vex::velocityUnits::rpm);
+  vex::task::sleep(ti);
+  FL.stop();
+  FR.stop();
+  BL.stop();
+  BR.stop();
+}
+
 void Startup() {
 
   // Calibrates Gyro
@@ -42,7 +57,7 @@ void Startup() {
   Brain.Screen.setFont(vex::mono40);
   Brain.Screen.printAt(1, 40, "Calibrating...");
   Gyro.startCalibration();
-  vex::task::sleep(1500);
+  wait(1.5, sec);
   Brain.Screen.clearScreen();
   Brain.Screen.printAt(1, 40, "Done");
   Controller1.Screen.clearScreen();
