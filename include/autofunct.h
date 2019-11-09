@@ -37,8 +37,8 @@ void Pstrafe(int pw, int ti) {
   // Precice go for autonomous pw = power (rpm) ti = time (seconds)
   FL.spin(vex::directionType::rev, pw, vex::velocityUnits::rpm);
   FR.spin(vex::directionType::fwd, rw, vex::velocityUnits::rpm);
-  BL.spin(vex::directionType::rev, pw, vex::velocityUnits::rpm);
-  BR.spin(vex::directionType::fwd, rw, vex::velocityUnits::rpm);
+  BL.spin(vex::directionType::fwd, pw, vex::velocityUnits::rpm);
+  BR.spin(vex::directionType::rev, rw, vex::velocityUnits::rpm);
   vex::task::sleep(ti);
   FL.stop();
   FR.stop();
@@ -79,7 +79,7 @@ void motorset()
 }
 
 
-void go(int dir, int pwr, int) {
+void go(int dir, int pwr, int ti) {
   int Goff = 0; // nonfunctional maybe later
   int AFL;
   int ABL;
@@ -97,6 +97,11 @@ void go(int dir, int pwr, int) {
   BL.spin(vex::directionType::fwd, ABL, vex::velocityUnits::pct);
   FR.spin(vex::directionType::fwd, AFR, vex::velocityUnits::pct);
   BR.spin(vex::directionType::fwd, ABR, vex::velocityUnits::pct);
+  wait(ti,sec);
+  FL.stop();
+  BL.stop();
+  FR.stop();
+  BR.stop();
 }
 void Autoclaw(char x)
 {
