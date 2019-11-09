@@ -16,7 +16,7 @@ void Pturn(int tp)
   BR.stop();
 }
 
-void Pgo(int pw, int ti) {
+void Pgo(int pw, double ti) {
   ti = 1000 * ti;
   int rw = pw * -1;
   // Precice go for autonomous pw = power (rpm) ti = time (seconds)
@@ -24,14 +24,14 @@ void Pgo(int pw, int ti) {
   FR.spin(vex::directionType::fwd, rw, vex::velocityUnits::rpm);
   BL.spin(vex::directionType::fwd, pw, vex::velocityUnits::rpm);
   BR.spin(vex::directionType::fwd, rw, vex::velocityUnits::rpm);
-  vex::task::sleep(ti);
+  wait(ti,sec);
   FL.stop();
   FR.stop();
   BL.stop();
   BR.stop();
 }
 
-void Pstrafe(int pw, int ti) {
+void Pstrafe(int pw, double ti) {
   ti = 1000 * ti;
   int rw = pw * -1;
   // Precice go for autonomous pw = power (rpm) ti = time (seconds)
@@ -39,7 +39,7 @@ void Pstrafe(int pw, int ti) {
   FR.spin(vex::directionType::fwd, rw, vex::velocityUnits::rpm);
   BL.spin(vex::directionType::fwd, pw, vex::velocityUnits::rpm);
   BR.spin(vex::directionType::rev, rw, vex::velocityUnits::rpm);
-  vex::task::sleep(ti);
+  wait(ti, sec);
   FL.stop();
   FR.stop();
   BL.stop();
@@ -68,7 +68,7 @@ void Startup() {
 void motorset()
 {
   // Sets motor settings
-  Clawmotor.setMaxTorque(25.00, percentUnits::pct);
+  Clawmotor.setMaxTorque(100.00, percentUnits::pct);
   Llift.setStopping(hold);
   Rlift.setStopping(hold);
   BL.setStopping(coast);

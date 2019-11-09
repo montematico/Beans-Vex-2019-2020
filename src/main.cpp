@@ -60,8 +60,10 @@ void autonomous(void) {
   Startup();
   std::cout << "Gyro Calibrated" << std::endl;
   // Yanks lift up and done to deploy claw.
-  if (false) //Strafe code
+  if (true) //Strafe code
   {
+    //Pstrafe(50,2);
+   // Pstrafe(-50, 2); //Blue
     wait(0.3, sec);
     DLcontrol(-80);
     wait(2, sec);
@@ -73,8 +75,8 @@ void autonomous(void) {
     wait(0.7, sec);
     Autoclaw('s');
 
-    //Pstrafe(-50, 1); //Red Strafe
-    Pstrafe(50, 1); //Blue Strafe
+    Pstrafe(-50, 1.5); //Red Strafe
+    //Pstrafe(50, 1); //Blue Strafe
 
     DLcontrol(30);
     wait(1.7, sec);
@@ -88,7 +90,7 @@ void autonomous(void) {
     wait(2, sec);
     DLcontrol(0);
   }
-  if (true) //Diagnal code 
+  if (false) //Diagnal code 
   {
     DLcontrol(100); // This couldn't be its own functions because it calls
                     // DLcontrol which is in a seperate file than autofunct.h
