@@ -15,14 +15,48 @@
 // Clawmotor            motor         13
 // Pot                  pot           D
 // ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// BLimitSwitch         limit         B
+// TLimitSwitch         limit         C
+// Gyro                 gyro          A
+// FL                   motor         6
+// BL                   motor         7
+// BR                   motor         8
+// FR                   motor         9
+// Rlift                motor         11
+// Llift                motor         12
+// Controller1          controller
+// IdiotSwitch          bumper        H
+// Clawmotor            motor         13
+// Pot                  pot           D
+// ---- END VEXCODE CONFIGURED DEVICES ----
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
-/*    Author:       Mika P.E.                                                 */
+/*    Author:       VEX                                                       */
 /*    Created:      Thu Sep 26 2019                                           */
 /*    Description:  Competition Template                                      */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
+
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// BLimitSwitch         limit         B
+// TLimitSwitch         limit         C
+// Gyro                 gyro          A
+// FL                   motor         6
+// BL                   motor         7
+// BR                   motor         8
+// FR                   motor         9
+// Rlift                motor         11
+// Llift                motor         12
+// Controller1          controller
+// IdiotSwitch          bumper        H
+// Clawmotor            motor         13
+// ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "autofunct.h"
 #include "functions.h"
@@ -35,6 +69,16 @@ using namespace vex;
 competition Competition;
 
 // define your global instances of motors and other devices here
+
+/*---------------------------------------------------------------------------*/
+/*                          Pre-Autonomous Functions                         */
+/*                                                                           */
+/*  You may want to perform some actions before the competition starts.      */
+/*  Do them in the following function.  You must return from this function   */
+/*  or the autonomous and usercontrol tasks will not be started.  This       */
+/*  function is only called once after the V5 has been powered on and        */
+/*  not every time that the robot is disabled.                               */
+/*---------------------------------------------------------------------------*/
 
 void pre_auton(void) {
   motorset();
@@ -59,12 +103,10 @@ void autonomous(void) {
   std::cout << "Autonon start" << std::endl;
   Startup();
   std::cout << "Gyro Calibrated" << std::endl;
+
   // Yanks lift up and done to deploy claw.
   if (true) //Strafe code
   {
-    //Pstrafe(50,2);
-   // Pstrafe(-50, 2); //Blue
-    wait(0.3, sec);
     DLcontrol(-80);
     wait(2, sec);
     DLcontrol(0);
@@ -75,9 +117,8 @@ void autonomous(void) {
     wait(0.7, sec);
     Autoclaw('s');
 
-    Pstrafe(-50, 1.5); //Red Strafe
-    //Pstrafe(50, 1); //Blue Strafe
-
+    //Pstrafe(-50, 1); //Red Strafe
+    Pstrafe(50, 1); //Blue Strafe
     DLcontrol(30);
     wait(1.7, sec);
     DLcontrol(0);
@@ -85,10 +126,14 @@ void autonomous(void) {
     Pgo(10, 2);
     Autoclaw('c');
     std::cout << "Cube Grabbed, lifting" << std::endl;
-    wait(1.5, sec);
+    wait(1, sec);
     DLcontrol(-60);
-    wait(2, sec);
+    wait(1.8, sec);
     DLcontrol(0);
+    //Pstrafe(-100, 1); //blue
+    Pstrafe(100, 1); //red
+    Pstrafe(-100, 0.5); //red
+    //Pstrafe(100, 0.5);//blue
   }
   if (false) //Diagnal code 
   {

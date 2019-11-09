@@ -17,7 +17,7 @@ void Pturn(int tp)
 }
 
 void Pgo(int pw, double ti) {
-  ti = 1000 * ti;
+  //ti = 1000 * ti;
   int rw = pw * -1;
   // Precice go for autonomous pw = power (rpm) ti = time (seconds)
   FL.spin(vex::directionType::fwd, pw, vex::velocityUnits::rpm);
@@ -32,7 +32,7 @@ void Pgo(int pw, double ti) {
 }
 
 void Pstrafe(int pw, double ti) {
-  ti = 1000 * ti;
+  //ti = 1000 * ti;
   int rw = pw * -1;
   // Precice go for autonomous pw = power (rpm) ti = time (seconds)
   FL.spin(vex::directionType::rev, pw, vex::velocityUnits::rpm);
@@ -40,6 +40,7 @@ void Pstrafe(int pw, double ti) {
   BL.spin(vex::directionType::fwd, pw, vex::velocityUnits::rpm);
   BR.spin(vex::directionType::rev, rw, vex::velocityUnits::rpm);
   wait(ti, sec);
+ // vex::task::sleep(ti);
   FL.stop();
   FR.stop();
   BL.stop();
@@ -57,7 +58,7 @@ void Startup() {
   Brain.Screen.setFont(vex::mono40);
   Brain.Screen.printAt(1, 40, "Calibrating...");
   Gyro.startCalibration();
-  wait(1.5, sec);
+  wait(1, sec);
   Brain.Screen.clearScreen();
   Brain.Screen.printAt(1, 40, "Done");
   Controller1.Screen.clearScreen();
@@ -79,7 +80,7 @@ void motorset()
 }
 
 
-void go(int dir, int pwr, int ti) {
+void go(int dir, int pwr, int) {
   int Goff = 0; // nonfunctional maybe later
   int AFL;
   int ABL;
@@ -97,11 +98,6 @@ void go(int dir, int pwr, int ti) {
   BL.spin(vex::directionType::fwd, ABL, vex::velocityUnits::pct);
   FR.spin(vex::directionType::fwd, AFR, vex::velocityUnits::pct);
   BR.spin(vex::directionType::fwd, ABR, vex::velocityUnits::pct);
-  wait(ti,sec);
-  FL.stop();
-  BL.stop();
-  FR.stop();
-  BR.stop();
 }
 void Autoclaw(char x)
 {
