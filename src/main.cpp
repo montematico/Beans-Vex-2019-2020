@@ -60,7 +60,7 @@ void autonomous(void) {
   Startup();
   std::cout << "Gyro Calibrated" << std::endl;
   // Yanks lift up and done to deploy claw.
-  if (true) //Strafe code
+  if (false) //Strafe code
   {
     wait(0.3, sec);
     DLcontrol(-80);
@@ -72,7 +72,10 @@ void autonomous(void) {
     Autoclaw('o');
     wait(0.7, sec);
     Autoclaw('s');
-    Pstrafe(-50, 1);
+
+    //Pstrafe(-50, 1); //Red Strafe
+    Pstrafe(50, 1); //Blue Strafe
+
     DLcontrol(30);
     wait(1.7, sec);
     DLcontrol(0);
@@ -85,7 +88,7 @@ void autonomous(void) {
     wait(2, sec);
     DLcontrol(0);
   }
-  if (false) //Diagnal code 
+  if (true) //Diagnal code 
   {
     DLcontrol(100); // This couldn't be its own functions because it calls
                     // DLcontrol which is in a seperate file than autofunct.h
@@ -111,6 +114,19 @@ void autonomous(void) {
     wait(2, sec);
     DLcontrol(0);
   }
+  if(false) //Claw deploy no auton
+  {
+    wait(0.3, sec);
+    DLcontrol(-80);
+    wait(2, sec);
+    DLcontrol(0);
+    std::cout << "Claw Deployed" << std::endl;
+    Brain.Screen.printAt(1, 60, "Claw Deployed");
+    std::cout << "Claw open" << std::endl;
+    Autoclaw('o');
+    wait(0.7, sec);
+    Autoclaw('s');
+  }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -124,25 +140,16 @@ void autonomous(void) {
 /*---------------------------------------------------------------------------*/
 
 void usercontrol(void) {
-  motorset();
+  motorset(); //this is incase pre auton doenst work or we're driving it for practice.
 
   // User control code here, inside the loop
   while (1) {
-    // This is the main execution loop for the user control program.
-    // Each time through the loop your program should update motor + servo
-    // values based on feedback from the joysticks.
 
-    Gcode();
-    // checks if anyof the northturn buttons were pressed
-    Ncheck();
-    DriveTrain(true);
-    Lcontrol();
-    ClawControl();
-
-    // ........................................................................
-    // Insert user code here. This is where you use the joystick values to
-    // update your motors, etc.
-    // ........................................................................
+    Gcode(); //Displays cool things on screen.
+    Ncheck(); //Checks if northturn buttons are pressed
+    DriveTrain(true); //Runs drivetrain, bool was for a depreciated function.
+    Lcontrol(); //Controls the lift
+    ClawControl(); //controls the claw.
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
