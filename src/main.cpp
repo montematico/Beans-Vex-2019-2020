@@ -13,49 +13,6 @@
 // Controller1          controller
 // IdiotSwitch          bumper        H
 // Clawmotor            motor         13
-// Pot                  pot           D
-// ---- END VEXCODE CONFIGURED DEVICES ----
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// BLimitSwitch         limit         B
-// TLimitSwitch         limit         C
-// Gyro                 gyro          A
-// FL                   motor         6
-// BL                   motor         7
-// BR                   motor         8
-// FR                   motor         9
-// Rlift                motor         11
-// Llift                motor         12
-// Controller1          controller
-// IdiotSwitch          bumper        H
-// Clawmotor            motor         13
-// Pot                  pot           D
-// ---- END VEXCODE CONFIGURED DEVICES ----
-/*----------------------------------------------------------------------------*/
-/*                                                                            */
-/*    Module:       main.cpp                                                  */
-/*    Author:       VEX                                                       */
-/*    Created:      Thu Sep 26 2019                                           */
-/*    Description:  Competition Template                                      */
-/*                                                                            */
-/*----------------------------------------------------------------------------*/
-
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// BLimitSwitch         limit         B
-// TLimitSwitch         limit         C
-// Gyro                 gyro          A
-// FL                   motor         6
-// BL                   motor         7
-// BR                   motor         8
-// FR                   motor         9
-// Rlift                motor         11
-// Llift                motor         12
-// Controller1          controller
-// IdiotSwitch          bumper        H
-// Clawmotor            motor         13
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "autofunct.h"
@@ -107,18 +64,24 @@ void autonomous(void) {
   // Yanks lift up and done to deploy claw.
   if (true) //Strafe code
   {
+    int blue = -1; //set to -1 for blue, 1 for red.
+    Pgo(50,0.1);
+    Autoclaw('c');
+    wait(0.15, sec);
+    Autoclaw('s');
     DLcontrol(-80);
     wait(2, sec);
     DLcontrol(0);
     std::cout << "Claw Deployed" << std::endl;
     Brain.Screen.printAt(1, 60, "Claw Deployed");
     std::cout << "Claw open" << std::endl;
+    
     Autoclaw('o');
     wait(0.7, sec);
     Autoclaw('s');
 
-    //Pstrafe(-50, 1); //Red Strafe
-    Pstrafe(50, 1); //Blue Strafe
+    Pstrafe(blue * 50, 1);
+
     DLcontrol(30);
     wait(1.7, sec);
     DLcontrol(0);
@@ -130,10 +93,9 @@ void autonomous(void) {
     DLcontrol(-60);
     wait(1.8, sec);
     DLcontrol(0);
-    //Pstrafe(-100, 1); //blue
-    Pstrafe(100, 1); //red
-    Pstrafe(-100, 0.5); //red
-    //Pstrafe(100, 0.5);//blue
+
+    Pstrafe(blue * -100, 1);
+    Pstrafe(blue * 100, 0.5);
   }
   if (false) //Diagnal code 
   {
