@@ -61,80 +61,66 @@ void autonomous(void) {
   Startup();
   std::cout << "Gyro Calibrated" << std::endl;
 
+  int blue = 1; //set to -1 for blue, 1 for red.
   // Yanks lift up and done to deploy claw.
   if (true) //Strafe code
   {
-    int blue = -1; //set to -1 for blue, 1 for red.
-    Pgo(50,0.1);
+    Pgo(50,0.5);
     Autoclaw('c');
-    wait(0.15, sec);
+    wait(0.3, sec);
     Autoclaw('s');
     DLcontrol(-80);
-    wait(2, sec);
+    wait(1.0, sec);
     DLcontrol(0);
+    Pgo(-50,0.25);
     std::cout << "Claw Deployed" << std::endl;
     Brain.Screen.printAt(1, 60, "Claw Deployed");
     std::cout << "Claw open" << std::endl;
     
     Autoclaw('o');
-    wait(0.7, sec);
+    wait(0.65, sec);
     Autoclaw('s');
 
-    Pstrafe(blue * 50, 1);
+    Pstrafe(blue * 100, 1.5);
 
-    DLcontrol(30);
+    Pgo(-70,2);
+    Pgo(20,1);
+
+    Pstrafe(blue * 50,1); // Hopefully re-aligns the robot.
+
+    DLcontrol(50);
     wait(1.7, sec);
     DLcontrol(0);
+    Pgo(50,0.75);
     std::cout << "Going for cube" << std::endl;
     Pgo(10, 2);
     Autoclaw('c');
     std::cout << "Cube Grabbed, lifting" << std::endl;
     wait(1, sec);
-    DLcontrol(-60);
-    wait(1.8, sec);
-    DLcontrol(0);
-
-    Pstrafe(blue * -100, 1);
-    Pstrafe(blue * 100, 0.5);
-  }
-  if (false) //Diagnal code 
-  {
-    DLcontrol(100); // This couldn't be its own functions because it calls
-                    // DLcontrol which is in a seperate file than autofunct.h
-    wait(0.3, sec);
-    DLcontrol(-80);
-    wait(2, sec);
-    DLcontrol(0);
-    std::cout << "Claw Deployed" << std::endl;
-    Brain.Screen.printAt(1, 60, "Claw Deployed");
-    std::cout << "Claw open" << std::endl;
-    Autoclaw('o');
-    wait(0.7, sec);
-    Autoclaw('s');
-    DLcontrol(30);
+    DLcontrol(-50);
     wait(1.7, sec);
     DLcontrol(0);
-    std::cout << "Going for cube" << std::endl;
-    Pgo(10, 2);
-    Autoclaw('c');
-    std::cout << "Cube Grabbed, lifting" << std::endl;
-    wait(1, sec);
-    DLcontrol(-60);
-    wait(2, sec);
-    DLcontrol(0);
-  }
-  if(false) //Claw deploy no auton
-  {
-    wait(0.3, sec);
-    DLcontrol(-80);
-    wait(2, sec);
-    DLcontrol(0);
-    std::cout << "Claw Deployed" << std::endl;
-    Brain.Screen.printAt(1, 60, "Claw Deployed");
-    std::cout << "Claw open" << std::endl;
+    Pgo(-70, 1);
+    Pgo(20, 1);
+
+    Pstrafe(blue * -50, 3.3);
+
+    Pgo(30, 2);
+    Pgo(-20,2);
     Autoclaw('o');
-    wait(0.7, sec);
+  }
+  if (false) //STRAFE
+  {
+    Pgo(50,0.5);
+    Autoclaw('c');
+    wait(0.3, sec);
     Autoclaw('s');
+    DLcontrol(-30);
+    wait(1.0, sec);
+    DLcontrol(0);
+
+    Pstrafe(blue * -100, 2);
+    Pstrafe(blue * 50, 5);
   }
 }
 
