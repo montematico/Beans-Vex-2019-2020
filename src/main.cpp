@@ -1,20 +1,19 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// BLimitSwitch         limit         B
-// TLimitSwitch         limit         C
-// Gyro                 gyro          A
-// FL                   motor         6
-// BL                   motor         7
-// BR                   motor         8
-// FR                   motor         9
-// Rlift                motor         11
-// Llift                motor         12
-// Controller1          controller
-// IdiotSwitch          bumper        H
-// Clawmotor            motor         13
+// BLimitSwitch         limit         B               
+// TLimitSwitch         limit         C               
+// Gyro                 gyro          A               
+// FL                   motor         6               
+// BL                   motor         7               
+// BR                   motor         8               
+// FR                   motor         9               
+// Rlift                motor         14              
+// Llift                motor         12              
+// Controller1          controller                    
+// Clawmotor            motor         13              
+// Pot                  pot           D               
 // ---- END VEXCODE CONFIGURED DEVICES ----
-
 #include "autofunct.h"
 #include "functions.h"
 #include "vex.h"
@@ -61,28 +60,55 @@ void autonomous(void) {
   Startup();
   std::cout << "Gyro Calibrated" << std::endl;
 
-  int blue = 1; //set to -1 for blue, 1 for red.
+  int blue = -1; //set to -1 for blue, 1 for red.
   // Yanks lift up and done to deploy claw.
   if (true) //Strafe code
   {
-    Pgo(50,0.5);
+    go(50);
     Autoclaw('c');
     wait(0.3, sec);
     Autoclaw('s');
+    wait(0.2,sec);
+    halt();
+
     DLcontrol(-80);
-    wait(1.0, sec);
+    Pgo(12.5, 1.0);
     DLcontrol(0);
-    Pgo(-50,0.25);
     std::cout << "Claw Deployed" << std::endl;
     Brain.Screen.printAt(1, 60, "Claw Deployed");
     std::cout << "Claw open" << std::endl;
     
+    Pgo(-100, 1.5);
+    Pgo(50,4);
+    Brain.Screen.clearScreen();
+    while(true)
+    {
+      Brain.Screen.setFont(vex::mono40);
+      int i = 0;
+      int y = 0;
+      Brain.Screen.printAt(i, y, "Beans");
+      i++;
+      y++;
+      if (i > 100)
+      {
+        i = 0;
+      }
+      if (y > 100)
+      {
+        y = 0;
+      }
+      wait(0.1,sec);
+    }
+/*
+    go(100);
     Autoclaw('o');
     wait(0.65, sec);
     Autoclaw('s');
-
-    Pstrafe(blue * 100, 1.5);
-
+    wait(0.85,sec);
+    halt();
+*/
+  //  Pstrafe(blue * 100, 1.5);
+/*
     Pgo(-70,2);
     Pgo(20,1);
 
@@ -90,6 +116,10 @@ void autonomous(void) {
 
     DLcontrol(50);
     wait(1.7, sec);
+    DLcontrol(0);
+
+    DLcontrol(-10);
+    wait(0.2, sec);
     DLcontrol(0);
     Pgo(50,0.75);
     std::cout << "Going for cube" << std::endl;
@@ -108,6 +138,7 @@ void autonomous(void) {
     Pgo(30, 2);
     Pgo(-20,2);
     Autoclaw('o');
+    */
   }
   if (false) //STRAFE
   {

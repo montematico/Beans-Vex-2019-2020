@@ -18,7 +18,6 @@ motor FR = motor(PORT9, ratio18_1, true);
 motor Rlift = motor(PORT14, ratio36_1, true);
 motor Llift = motor(PORT12, ratio36_1, false);
 controller Controller1 = controller(primary);
-bumper IdiotSwitch = bumper(Brain.ThreeWirePort.H);
 motor Clawmotor = motor(PORT13, ratio36_1, false);
 pot Pot = pot(Brain.ThreeWirePort.D);
 

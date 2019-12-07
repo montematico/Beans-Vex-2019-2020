@@ -73,7 +73,7 @@ void Ncheck()
     }
 }
 
-void DLcontrol(int pwr) {
+void DLcontrol(double pwr) {
   // Synchronizes motors for lift
   // uses pwr as a -100-100 integer for controlling both lift motors
   //Also used in autonamous code to raise and lower lift.
@@ -87,7 +87,7 @@ void DLcontrol(int pwr) {
 }
 
 void Lcontrol() {
-  int pw = 40; // How much power the motors should provide RPM
+  double pw = 80.08; // How much power the motors should provide RPM
   // controls the button input for lift
   if (Controller1.ButtonR2.pressing() && BLimitSwitch.pressing() == false) {
     DLcontrol(pw);
