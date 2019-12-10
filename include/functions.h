@@ -103,9 +103,9 @@ void Gcode() {
   Brain.Screen.clearScreen();
   Controller1.Screen.clearScreen();
   Brain.Screen.setFont(vex::mono40);
-  Brain.Screen.printAt(20, 80, "Gyro");
-  Brain.Screen.printAt(20, 120, "Reading: %f", Gyro.value(vex::rotationUnits::deg));
-  Controller1.Screen.print("Gyro Reading: %f", Gyro.value(vex::rotationUnits::deg));
+  Brain.Screen.printAt(20, 80, "Pot");
+  Brain.Screen.printAt(20, 120, "Reading: %f", Pot.value(vex::rotationUnits::deg));
+  Controller1.Screen.print("Gyro Reading: %f", Pot.value(vex::rotationUnits::deg));
 }
 
 void MotorStop()

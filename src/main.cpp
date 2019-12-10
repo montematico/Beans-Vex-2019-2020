@@ -13,6 +13,23 @@
 // Controller1          controller                    
 // Clawmotor            motor         13              
 // Pot                  pot           D               
+// Xencode              encoder       E, F            
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// BLimitSwitch         limit         B               
+// TLimitSwitch         limit         C               
+// Gyro                 gyro          A               
+// FL                   motor         6               
+// BL                   motor         7               
+// BR                   motor         8               
+// FR                   motor         9               
+// Rlift                motor         14              
+// Llift                motor         12              
+// Controller1          controller                    
+// Clawmotor            motor         13              
+// Pot                  pot           D               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 #include "autofunct.h"
 #include "functions.h"
@@ -167,10 +184,11 @@ void autonomous(void) {
 
 void usercontrol(void) {
   motorset(); //this is incase pre auton doenst work or we're driving it for practice.
-
+  Xencode.resetRotation();
   // User control code here, inside the loop
   while (1) {
 
+    std::cout << Xencode.position(rotationUnits::rev) << std::endl;
     Gcode(); //Displays cool things on screen.
     Ncheck(); //Checks if northturn buttons are pressed
     DriveTrain(true); //Runs drivetrain, bool was for a depreciated function.

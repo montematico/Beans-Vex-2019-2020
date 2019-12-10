@@ -15,6 +15,7 @@ extern motor Llift;
 extern controller Controller1;
 extern motor Clawmotor;
 extern pot Pot;
+extern encoder Xencode;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Text.

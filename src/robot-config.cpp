@@ -20,6 +20,7 @@ motor Llift = motor(PORT12, ratio36_1, false);
 controller Controller1 = controller(primary);
 motor Clawmotor = motor(PORT13, ratio36_1, false);
 pot Pot = pot(Brain.ThreeWirePort.D);
+encoder Xencode = encoder(Brain.ThreeWirePort.E);
 
 // VEXcode generated functions
 
