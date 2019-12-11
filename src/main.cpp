@@ -185,7 +185,8 @@ void autonomous(void) {
 void usercontrol(void) {
   motorset(); //this is incase pre auton doenst work or we're driving it for practice.
   // User control code here, inside the loop
-  task DriveTrain = task(DriveTrainCallback);
+  task DriveTrain = task(DriveTrainCallback); //Creates Instance of drivetrain.
+  DriveTrain.setPriority(1);
   while (1) {
     Gcode(); //Displays cool things on screen.
     Ncheck(); //Checks if northturn buttons are pressed
