@@ -8,7 +8,30 @@ int FRI;
 int BRI;
 // More Variables for gnocchi code
 int Goff = 0; // Gyroscope offset, set to zero because its non functional
+int DriveTrainCallback() 
+{
+  while(true)
+  {
+   FLI = Controller1.Axis3.position(vex::percentUnits::pct) +
+        (1 * Controller1.Axis4.position(vex::percentUnits::pct)) +
+        Controller1.Axis1.position(vex::percentUnits::pct) - Goff;
+    BLI = Controller1.Axis3.position(vex::percentUnits::pct) -
+        (1 * Controller1.Axis4.position(vex::percentUnits::pct)) +
+        Controller1.Axis1.position(vex::percentUnits::pct) - Goff;
+    FRI = (-1 * Controller1.Axis3.position(vex::percentUnits::pct)) +
+        (1 * Controller1.Axis4.position(vex::percentUnits::pct)) +
+        Controller1.Axis1.position(vex::percentUnits::pct) - Goff;
+    BRI = (-1 * Controller1.Axis3.position(vex::percentUnits::pct)) -
+        (1 * Controller1.Axis4.position(vex::percentUnits::pct)) +
+        Controller1.Axis1.position(vex::percentUnits::pct) - Goff;
 
+  FL.spin(vex::directionType::fwd, FLI, vex::velocityUnits::pct);
+  BL.spin(vex::directionType::fwd, BLI, vex::velocityUnits::pct);
+  FR.spin(vex::directionType::fwd, FRI, vex::velocityUnits::pct);
+  BR.spin(vex::directionType::fwd, BRI, vex::velocityUnits::pct);
+  }
+  return 1;
+}
 void DriveTrain(bool run) // Contains code for driving motors
 {
   // All values that need to be calculated for the x-drive

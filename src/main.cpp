@@ -184,14 +184,12 @@ void autonomous(void) {
 
 void usercontrol(void) {
   motorset(); //this is incase pre auton doenst work or we're driving it for practice.
-  Xencode.resetRotation();
   // User control code here, inside the loop
+  task DriveTrain = task(DriveTrainCallback);
   while (1) {
-
-    std::cout << Xencode.position(rotationUnits::rev) << std::endl;
     Gcode(); //Displays cool things on screen.
     Ncheck(); //Checks if northturn buttons are pressed
-    DriveTrain(true); //Runs drivetrain, bool was for a depreciated function.
+    //Runs drivetrain, bool was for a depreciated function.
     Lcontrol(); //Controls the lift
     ClawControl(); //controls the claw.
 
@@ -203,6 +201,7 @@ void usercontrol(void) {
 //
 // Main will set up the competition functions and callbacks.
 //
+
 int main() {
 
   // Set up callbacks for autonomous and driver control periods.
