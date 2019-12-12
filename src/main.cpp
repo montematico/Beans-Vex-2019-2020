@@ -78,98 +78,7 @@ void autonomous(void) {
   std::cout << "Gyro Calibrated" << std::endl;
 
   int blue = -1; //set to -1 for blue, 1 for red.
-  // Yanks lift up and done to deploy claw.
-  if (true) //Strafe code
-  {
-    go(50);
-    Autoclaw('c');
-    wait(0.3, sec);
-    Autoclaw('s');
-    wait(0.2,sec);
-    halt();
-
-    DLcontrol(-80);
-    Pgo(12.5, 1.0);
-    DLcontrol(0);
-    std::cout << "Claw Deployed" << std::endl;
-    Brain.Screen.printAt(1, 60, "Claw Deployed");
-    std::cout << "Claw open" << std::endl;
-    
-    Pgo(-100, 1.5);
-    Pgo(50,4);
-    Brain.Screen.clearScreen();
-    while(true)
-    {
-      Brain.Screen.setFont(vex::mono40);
-      int i = 0;
-      int y = 0;
-      Brain.Screen.printAt(i, y, "Beans");
-      i++;
-      y++;
-      if (i > 100)
-      {
-        i = 0;
-      }
-      if (y > 100)
-      {
-        y = 0;
-      }
-      wait(0.1,sec);
-    }
-/*
-    go(100);
-    Autoclaw('o');
-    wait(0.65, sec);
-    Autoclaw('s');
-    wait(0.85,sec);
-    halt();
-*/
-  //  Pstrafe(blue * 100, 1.5);
-/*
-    Pgo(-70,2);
-    Pgo(20,1);
-
-    Pstrafe(blue * 50,1); // Hopefully re-aligns the robot.
-
-    DLcontrol(50);
-    wait(1.7, sec);
-    DLcontrol(0);
-
-    DLcontrol(-10);
-    wait(0.2, sec);
-    DLcontrol(0);
-    Pgo(50,0.75);
-    std::cout << "Going for cube" << std::endl;
-    Pgo(10, 2);
-    Autoclaw('c');
-    std::cout << "Cube Grabbed, lifting" << std::endl;
-    wait(1, sec);
-    DLcontrol(-50);
-    wait(1.7, sec);
-    DLcontrol(0);
-    Pgo(-70, 1);
-    Pgo(20, 1);
-
-    Pstrafe(blue * -50, 3.3);
-
-    Pgo(30, 2);
-    Pgo(-20,2);
-    Autoclaw('o');
-    */
-  }
-  if (false) //STRAFE
-  {
-    Pgo(50,0.5);
-    Autoclaw('c');
-    wait(0.3, sec);
-    Autoclaw('s');
-    DLcontrol(-30);
-    wait(1.0, sec);
-    DLcontrol(0);
-
-    Pstrafe(blue * -100, 2);
-    Pstrafe(blue * 50, 5);
-  }
+  Pgo(50,5);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -186,7 +95,7 @@ void usercontrol(void) {
   motorset(); //this is incase pre auton doenst work or we're driving it for practice.
   // User control code here, inside the loop
   task DriveTrain = task(DriveTrainCallback); //Creates Instance of drivetrain.
-  DriveTrain.setPriority(1);
+  DriveTrain.setPriority(25);
   while (1) {
     Gcode(); //Displays cool things on screen.
     Ncheck(); //Checks if northturn buttons are pressed
