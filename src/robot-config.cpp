@@ -21,6 +21,7 @@ controller Controller1 = controller(primary);
 motor Clawmotor = motor(PORT13, ratio36_1, false);
 pot Pot = pot(Brain.ThreeWirePort.D);
 encoder Xencode = encoder(Brain.ThreeWirePort.E);
+encoder Yencode = encoder(Brain.ThreeWirePort.G);
 
 // VEXcode generated functions
 
@@ -28,7 +29,7 @@ encoder Xencode = encoder(Brain.ThreeWirePort.E);
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Text.
- *
+ * 
  * This should be called at the start of your int main function.
  */
 void vexcodeInit( void ) {

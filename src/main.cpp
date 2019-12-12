@@ -1,6 +1,57 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
+// BLimitSwitch         limit         B               
+// TLimitSwitch         limit         C               
+// Gyro                 gyro          A               
+// FL                   motor         6               
+// BL                   motor         7               
+// BR                   motor         8               
+// FR                   motor         9               
+// Rlift                motor         14              
+// Llift                motor         12              
+// Controller1          controller                    
+// Clawmotor            motor         13              
+// Pot                  pot           D               
+// Xencode              encoder       E, F            
+// Yencode              encoder       G, H            
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// BLimitSwitch         limit         B               
+// TLimitSwitch         limit         C               
+// Gyro                 gyro          A               
+// FL                   motor         6               
+// BL                   motor         7               
+// BR                   motor         8               
+// FR                   motor         9               
+// Rlift                motor         14              
+// Llift                motor         12              
+// Controller1          controller                    
+// Clawmotor            motor         13              
+// Pot                  pot           D               
+// Xencode              encoder       E, F            
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// BLimitSwitch         limit         B               
+// TLimitSwitch         limit         C               
+// Gyro                 gyro          A               
+// FL                   motor         6               
+// BL                   motor         7               
+// BR                   motor         8               
+// FR                   motor         9               
+// Rlift                motor         14              
+// Llift                motor         12              
+// Controller1          controller                    
+// Clawmotor            motor         13              
+// Pot                  pot           D               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
 // BLimitSwitch         limit         B
 // TLimitSwitch         limit         C
 // Gyro                 gyro          A
@@ -71,14 +122,16 @@ void pre_auton(void) {
 /*                                                                           */
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
-
+extern double dist[2];
 void autonomous(void) {
   std::cout << "Autonon start" << std::endl;
   Startup();
   std::cout << "Gyro Calibrated" << std::endl;
 
-  int blue = -1; //set to -1 for blue, 1 for red.
+  //int blue = -1; //set to -1 for blue, 1 for red.
   Pgo(50,5);
+  wait(1,sec);
+  Pstrafe(100, 3);
 }
 
 /*---------------------------------------------------------------------------*/

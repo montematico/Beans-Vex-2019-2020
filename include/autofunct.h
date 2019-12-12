@@ -1,4 +1,5 @@
 #include "vex.h"
+extern double dist[2];
 
 void Pturn(int tp)
 // Precise Turn for autonomous tp = how many degrees to turn.
@@ -23,7 +24,16 @@ int goCallback(void *pwti)
   float pw = x[0];
   float ti = x[1];
   float rw = pw * -1;
-  std::cout << "Travelling for " + ti +" seconds at: %" + pw + " power" << std::endl;
+  if(FR.isSpinning())
+  {
+    std::cout << "Drive is being used. Queing go command" << std::endl;
+    waitUntil(FR.isSpinning() == false);
+    std::cout << "Drive is free, Executing move." << std::endl;
+  } else
+  {
+    std::cout << "Executing without queue" << std::endl;
+  }
+  //std::cout << "Travelling for " + ti +" seconds at: %" + pw + " power" << std::endl;
   Brain.Screen.printAt(20, 80, "Pw: %f, Ti: %f",pw, ti);
 
   FL.spin(vex::directionType::fwd, pw, vex::velocityUnits::pct);
@@ -45,35 +55,42 @@ void Pgo(float pw, float ti)
   float pwti [2] = {pw,ti};
   task robogo( goCallback, (void *)&pwti);
 }
+
+int Pstrafecallback(void *pwti) {
+  float *x = (float *)pwti; //Does some magic stuff im far to underqualified to explain/understand
+  //For some reason naming *x anything else bricks it, im not sure why but whatever I've had too many breakdowns to care.
+  float pw = x[0];
+  float ti = x[1];
+  float rw = pw * -1;
+  if(FR.isSpinning())
+  {
+    std::cout << "Drive is being used. Queing strafe command" << std::endl;
+    waitUntil(FR.isSpinning() == false);
+    std::cout << "Drive is free, Executing move." << std::endl;
+  } else
+  {
+    std::cout << "Executing without queue" << std::endl;
+  }
+  //std::cout << "Travelling for " + ti +" seconds at: %" + pw + " power" << std::endl;
+  Brain.Screen.printAt(20, 80, "Pw: %f, Ti: %f",pw, ti);
+  // Precice strafe for autonomous pw = power (pct) ti = time (seconds)
+  FL.spin(vex::directionType::rev, pw, vex::velocityUnits::rpm);
+  FR.spin(vex::directionType::fwd, rw, vex::velocityUnits::rpm);
+  BL.spin(vex::directionType::fwd, pw, vex::velocityUnits::rpm);
+  BR.spin(vex::directionType::rev, rw, vex::velocityUnits::rpm);
+  wait(ti, sec);
+  FL.stop();
+  FR.stop();
+  BL.stop();
+  BR.stop();
+  return 0;
+}
 void Pstrafe(float pw, float ti)
 {
   //Im not sure how to pass multiple arguments to tasks
   //So I put it into an array which I send over
   float pwti [2] = {pw,ti};
   task robostrafe( goCallback, (void *)&pwti);
-}
-
-int Pstrafecallback(int pw, double ti) {
-  float *x = (float *)pwti; //Does some magic stuff im far to underqualified to explain/understand
-  //For some reason naming *x anything else bricks it, im not sure why but whatever I've had too many breakdowns to care.
-  float pw = x[0];
-  float ti = x[1];
-  float rw = pw * -1;
-  std::cout << "Travelling for " + ti +" seconds at: %" + pw + " power" << std::endl;
-  Brain.Screen.printAt(20, 80, "Pw: %f, Ti: %f",pw, ti);
-  //ti = 1000 * ti;
-  int rw = pw * -1;
-  // Precice go for autonomous pw = power (rpm) ti = time (seconds)
-  FL.spin(vex::directionType::rev, pw, vex::velocityUnits::rpm);
-  FR.spin(vex::directionType::fwd, rw, vex::velocityUnits::rpm);
-  BL.spin(vex::directionType::fwd, pw, vex::velocityUnits::rpm);
-  BR.spin(vex::directionType::rev, rw, vex::velocityUnits::rpm);
-  wait(ti, sec);
- // vex::task::sleep(ti);
-  FL.stop();
-  FR.stop();
-  BL.stop();
-  BR.stop();
 }
 
 void Startup() {
