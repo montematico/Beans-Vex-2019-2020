@@ -82,10 +82,9 @@
 // Clawmotor            motor         13
 // Pot                  pot           D
 // ---- END VEXCODE CONFIGURED DEVICES ----
+#include "vex.h"
 #include "autofunct.h"
 #include "functions.h"
-#include "vex.h"
-
 
 using namespace vex;
 
@@ -129,9 +128,7 @@ void autonomous(void) {
   std::cout << "Gyro Calibrated" << std::endl;
 
   //int blue = -1; //set to -1 for blue, 1 for red.
-  Pgo(50,5);
-  wait(1,sec);
-  Pstrafe(100, 3);
+  Pgo(10,12);
 }
 
 /*---------------------------------------------------------------------------*/

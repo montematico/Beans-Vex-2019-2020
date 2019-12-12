@@ -22,25 +22,21 @@ int goCallback(void *pwti)
   float *x = (float *)pwti; //Does some magic stuff im far to underqualified to explain/understand
   //For some reason naming *x anything else bricks it, im not sure why but whatever I've had too many breakdowns to care.
   float pw = x[0];
-  float ti = x[1];
+  float dis = x[1];
   float rw = pw * -1;
-  if(FR.isSpinning())
-  {
-    std::cout << "Drive is being used. Queing go command" << std::endl;
-    waitUntil(FR.isSpinning() == false);
-    std::cout << "Drive is free, Executing move." << std::endl;
-  } else
-  {
-    std::cout << "Executing without queue" << std::endl;
-  }
-  //std::cout << "Travelling for " + ti +" seconds at: %" + pw + " power" << std::endl;
-  Brain.Screen.printAt(20, 80, "Pw: %f, Ti: %f",pw, ti);
+  double Ydist = 0;
 
   FL.spin(vex::directionType::fwd, pw, vex::velocityUnits::pct);
   FR.spin(vex::directionType::fwd, rw, vex::velocityUnits::pct);
   BL.spin(vex::directionType::fwd, pw, vex::velocityUnits::pct);
   BR.spin(vex::directionType::fwd, rw, vex::velocityUnits::pct);
-  wait(ti,sec);
+  while(fabs(Ydist-dis) >= 0.2)
+  {
+    Ydist = Yencode.position(rotationUnits::deg);
+    Ydist = Ydist * (3.1415926535897932/180);
+    Ydist *= 1.375;
+  }
+  waitUntil(fabs(Yencode-dis) <= 0.2); //has an accuracy of 0.2 inches
   FL.stop();
   FR.stop();
   BL.stop();
@@ -48,11 +44,11 @@ int goCallback(void *pwti)
   return 0;
 }
 
-void Pgo(float pw, float ti)
+void Pgo(float pw, float dis)
 {
   //Im not sure how to pass multiple arguments to tasks
   //So I put it into an array which I send over
-  float pwti [2] = {pw,ti};
+  float pwti [2] = {pw,dis};
   task robogo( goCallback, (void *)&pwti);
 }
 
@@ -114,7 +110,7 @@ void Startup() {
 void motorset()
 {
   // Sets motor settings
-  Clawmotor.setMaxTorque(80.08, percentUnits::pct);
+  Clawmotor.setMaxTorque(100, percentUnits::pct);
   Llift.setStopping(hold);
   Rlift.setStopping(hold);
   BL.setStopping(coast);
