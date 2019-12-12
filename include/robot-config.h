@@ -13,11 +13,13 @@ extern motor FR;
 extern motor Rlift;
 extern motor Llift;
 extern controller Controller1;
-extern bumper IdiotSwitch;
+extern motor Clawmotor;
+extern pot Pot;
+extern encoder Xencode;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Text.
- * 
+ *
  * This should be called at the start of your int main function.
  */
 void  vexcodeInit( void );

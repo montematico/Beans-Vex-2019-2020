@@ -3,7 +3,7 @@
 void Pturn(int tp)
 // Precise Turn for autonomous tp = how many degrees to turn.
 {
-  while (Gyro.value(vex::rotationUnits::deg) < tp) 
+  while (Gyro.value(vex::rotationUnits::deg) < tp)
   {
     FL.spin(vex::directionType::fwd, 50, vex::velocityUnits::rpm);
     FR.spin(vex::directionType::fwd, 50, vex::velocityUnits::rpm);
@@ -16,15 +16,49 @@ void Pturn(int tp)
   BR.stop();
 }
 
-void Pgo(int pw, int ti) {
-  ti = 1000 * ti;
+int goCallback(void *pwti)
+{
+  float *x = (float *)pwti; //Does some magic stuff im far to underqualified to explain/understand
+  //For some reason naming *x anything else bricks it, im not sure why but whatever I've had too many breakdowns to care.
+  float pw = x[0];
+  float ti = x[1];
+  float rw = pw * -1;
+  std::cout << pw << std::endl;
+  std::cout << "PW above" << std::endl;
+  std::cout << ti << std::endl;
+
+
+  FL.spin(vex::directionType::fwd, pw, vex::velocityUnits::pct);
+  FR.spin(vex::directionType::fwd, rw, vex::velocityUnits::pct);
+  BL.spin(vex::directionType::fwd, pw, vex::velocityUnits::pct);
+  BR.spin(vex::directionType::fwd, rw, vex::velocityUnits::pct);
+  wait(ti,sec);
+  FL.stop();
+  FR.stop();
+  BL.stop();
+  BR.stop();
+  return 0;
+}
+
+void Pgo(float pw, float ti)
+{
+  //Im not sure how to pass multiple arguments to tasks
+  //So I put it into an array which I send over
+  float pwti [2] = {pw,ti};
+  task robo( goCallback, (void *)&pwti);
+}
+
+
+void Pstrafe(int pw, double ti) {
+  //ti = 1000 * ti;
   int rw = pw * -1;
   // Precice go for autonomous pw = power (rpm) ti = time (seconds)
-  FL.spin(vex::directionType::fwd, pw, vex::velocityUnits::rpm);
+  FL.spin(vex::directionType::rev, pw, vex::velocityUnits::rpm);
   FR.spin(vex::directionType::fwd, rw, vex::velocityUnits::rpm);
   BL.spin(vex::directionType::fwd, pw, vex::velocityUnits::rpm);
-  BR.spin(vex::directionType::fwd, rw, vex::velocityUnits::rpm);
-  vex::task::sleep(ti);
+  BR.spin(vex::directionType::rev, rw, vex::velocityUnits::rpm);
+  wait(ti, sec);
+ // vex::task::sleep(ti);
   FL.stop();
   FR.stop();
   BL.stop();
@@ -32,13 +66,6 @@ void Pgo(int pw, int ti) {
 }
 
 void Startup() {
-  // Sets motor settings
-  Llift.setStopping(brake);
-  Rlift.setStopping(brake);
-  BL.setStopping(coast);
-  BR.setStopping(coast);
-  FL.setStopping(coast);
-  FR.setStopping(coast);
 
   // Calibrates Gyro
   Controller1.Screen.clearScreen();
@@ -49,31 +76,52 @@ void Startup() {
   Brain.Screen.setFont(vex::mono40);
   Brain.Screen.printAt(1, 40, "Calibrating...");
   Gyro.startCalibration();
-  vex::task::sleep(1500);
+  wait(0, sec);
   Brain.Screen.clearScreen();
   Brain.Screen.printAt(1, 40, "Done");
   Controller1.Screen.clearScreen();
   Controller1.Screen.print("Done");
   Controller1.rumble("..");
-  vex::task::sleep(300);
+}
+void motorset()
+{
+  // Sets motor settings
+  Clawmotor.setMaxTorque(80.08, percentUnits::pct);
+  Llift.setStopping(hold);
+  Rlift.setStopping(hold);
+  BL.setStopping(coast);
+  BR.setStopping(coast);
+  FL.setStopping(coast);
+  FR.setStopping(coast);
+  Clawmotor.setStopping(hold);
 }
 
-void go(int dir, int pwr, int) {
-  int Goff = 0; // nonfunctional maybe later
-  int AFL;
-  int ABL;
-  int AFR;
-  int ABR;
-  int x = 10 * cos(dir);
-  int y = 10 * sin(dir);
-
-  AFL = y + (1 * y) - Goff;
-  ABL = y - (1 * y) - Goff;
-  AFR = (-1 * y) + (1 * y) - Goff;
-  ABR = (-1 * y) - (1 * y) - Goff;
-
-  FL.spin(vex::directionType::fwd, AFL, vex::velocityUnits::pct);
-  BL.spin(vex::directionType::fwd, ABL, vex::velocityUnits::pct);
-  FR.spin(vex::directionType::fwd, AFR, vex::velocityUnits::pct);
-  BR.spin(vex::directionType::fwd, ABR, vex::velocityUnits::pct);
+void go(int pw) {
+  int rw = pw * -1;
+  // Precice go for autonomous pw = power (rpm) ti = time (seconds)
+  FL.spin(vex::directionType::fwd, pw, vex::velocityUnits::rpm);
+  FR.spin(vex::directionType::fwd, rw, vex::velocityUnits::rpm);
+  BL.spin(vex::directionType::fwd, pw, vex::velocityUnits::rpm);
+  BR.spin(vex::directionType::fwd, rw, vex::velocityUnits::rpm);
+}
+void halt()
+{
+  FL.stop();
+  FR.stop();
+  BL.stop();
+  BR.stop();
+}
+void Autoclaw(char x)
+{
+  float speed = 30.0;
+  if(x == 'c') //Check if you're doing the wirhgt math here.
+  {
+    Clawmotor.spin(vex::directionType::fwd, 60, vex::velocityUnits::rpm);
+  } else if(x == 'o')
+  {
+    Clawmotor.spin(vex::directionType::rev, speed, vex::velocityUnits::rpm);
+  } else if(x == 's')
+  {
+    Clawmotor.stop();
+  }
 }
