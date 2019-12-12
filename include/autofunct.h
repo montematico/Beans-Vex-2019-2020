@@ -23,10 +23,8 @@ int goCallback(void *pwti)
   float pw = x[0];
   float ti = x[1];
   float rw = pw * -1;
-  std::cout << pw << std::endl;
-  std::cout << "PW above" << std::endl;
-  std::cout << ti << std::endl;
-
+  std::cout << "Travelling for " + ti +" seconds at: %" + pw + " power" << std::endl;
+  Brain.Screen.printAt(20, 80, "Pw: %f, Ti: %f",pw, ti);
 
   FL.spin(vex::directionType::fwd, pw, vex::velocityUnits::pct);
   FR.spin(vex::directionType::fwd, rw, vex::velocityUnits::pct);
@@ -45,11 +43,24 @@ void Pgo(float pw, float ti)
   //Im not sure how to pass multiple arguments to tasks
   //So I put it into an array which I send over
   float pwti [2] = {pw,ti};
-  task robo( goCallback, (void *)&pwti);
+  task robogo( goCallback, (void *)&pwti);
+}
+void Pstrafe(float pw, float ti)
+{
+  //Im not sure how to pass multiple arguments to tasks
+  //So I put it into an array which I send over
+  float pwti [2] = {pw,ti};
+  task robostrafe( goCallback, (void *)&pwti);
 }
 
-
-void Pstrafe(int pw, double ti) {
+int Pstrafecallback(int pw, double ti) {
+  float *x = (float *)pwti; //Does some magic stuff im far to underqualified to explain/understand
+  //For some reason naming *x anything else bricks it, im not sure why but whatever I've had too many breakdowns to care.
+  float pw = x[0];
+  float ti = x[1];
+  float rw = pw * -1;
+  std::cout << "Travelling for " + ti +" seconds at: %" + pw + " power" << std::endl;
+  Brain.Screen.printAt(20, 80, "Pw: %f, Ti: %f",pw, ti);
   //ti = 1000 * ti;
   int rw = pw * -1;
   // Precice go for autonomous pw = power (rpm) ti = time (seconds)

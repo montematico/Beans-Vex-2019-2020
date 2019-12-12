@@ -125,7 +125,7 @@ void Lcontrol() {
 void Gcode() {
   Brain.Screen.clearScreen();
   Controller1.Screen.clearScreen();
-  Brain.Screen.setFont(vex::mono40);
+  Brain.Screen.setFont(vex::mono20);
   Brain.Screen.printAt(20, 80, "Pot");
   Brain.Screen.printAt(20, 120, "Reading: %f", Pot.value(vex::rotationUnits::deg));
   Controller1.Screen.print("Gyro Reading: %f", Pot.value(vex::rotationUnits::deg));
