@@ -30,13 +30,18 @@ int goCallback(void *pwti)
   FR.spin(vex::directionType::fwd, rw, vex::velocityUnits::pct);
   BL.spin(vex::directionType::fwd, pw, vex::velocityUnits::pct);
   BR.spin(vex::directionType::fwd, rw, vex::velocityUnits::pct);
-  while(fabs(Ydist-dis) >= 0.2)
+  if(dis < 0)
+  {   
+    pw *= -1;
+  }
+  while(fabs(Ydist - dis) >= 0.2)
   {
     Ydist = Yencode.position(rotationUnits::deg);
     Ydist = Ydist * (3.1415926535897932/180);
     Ydist *= 1.375;
+    std::cout << Ydist << std::endl;
+    wait(10,msec);
   }
-  waitUntil(fabs(Yencode-dis) <= 0.2); //has an accuracy of 0.2 inches
   FL.stop();
   FR.stop();
   BL.stop();
@@ -52,41 +57,43 @@ void Pgo(float pw, float dis)
   task robogo( goCallback, (void *)&pwti);
 }
 
-int Pstrafecallback(void *pwti) {
+int Pstrafecallback(void *pwti) 
+{
   float *x = (float *)pwti; //Does some magic stuff im far to underqualified to explain/understand
   //For some reason naming *x anything else bricks it, im not sure why but whatever I've had too many breakdowns to care.
   float pw = x[0];
-  float ti = x[1];
-  float rw = pw * -1;
-  if(FR.isSpinning())
+  float dis = x[1];
+  double Xdist = 0;
+  if(dis < 0)
   {
-    std::cout << "Drive is being used. Queing strafe command" << std::endl;
-    waitUntil(FR.isSpinning() == false);
-    std::cout << "Drive is free, Executing move." << std::endl;
-  } else
-  {
-    std::cout << "Executing without queue" << std::endl;
+    pw *= -1;
   }
-  //std::cout << "Travelling for " + ti +" seconds at: %" + pw + " power" << std::endl;
-  Brain.Screen.printAt(20, 80, "Pw: %f, Ti: %f",pw, ti);
-  // Precice strafe for autonomous pw = power (pct) ti = time (seconds)
-  FL.spin(vex::directionType::rev, pw, vex::velocityUnits::rpm);
+  float rw = pw * -1;
+  FL.spin(vex::directionType::fwd, rw, vex::velocityUnits::rpm);
   FR.spin(vex::directionType::fwd, rw, vex::velocityUnits::rpm);
   BL.spin(vex::directionType::fwd, pw, vex::velocityUnits::rpm);
-  BR.spin(vex::directionType::rev, rw, vex::velocityUnits::rpm);
-  wait(ti, sec);
+  BR.spin(vex::directionType::fwd, pw, vex::velocityUnits::rpm);
+  while(fabs(Xdist-dis) >= 0.2)
+  {
+    Xdist = Xencode.position(rotationUnits::deg);
+    Xdist = Xdist * (3.1415926535897932/180); //Converts to radiians
+    Xdist *= 1.375; //Radius of wheel
+    std::cout << Xdist << std::endl;
+    wait(10,msec);
+  }
+  std::cout << "oop" << std::endl;
   FL.stop();
   FR.stop();
   BL.stop();
   BR.stop();
   return 0;
 }
-void Pstrafe(float pw, float ti)
+void Pstrafe(float pw, float dis)
 {
   //Im not sure how to pass multiple arguments to tasks
   //So I put it into an array which I send over
-  float pwti [2] = {pw,ti};
-  task robostrafe( goCallback, (void *)&pwti);
+  float pwti [2] = {pw,dis};
+  task robostrafe( Pstrafecallback, (void *)&pwti);
 }
 
 void Startup() {
@@ -111,6 +118,8 @@ void motorset()
 {
   // Sets motor settings
   Clawmotor.setMaxTorque(100, percentUnits::pct);
+  Xencode.resetRotation();
+  Yencode.resetRotation();
   Llift.setStopping(hold);
   Rlift.setStopping(hold);
   BL.setStopping(coast);

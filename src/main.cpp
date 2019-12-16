@@ -16,72 +16,7 @@
 // Xencode              encoder       E, F            
 // Yencode              encoder       G, H            
 // ---- END VEXCODE CONFIGURED DEVICES ----
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// BLimitSwitch         limit         B               
-// TLimitSwitch         limit         C               
-// Gyro                 gyro          A               
-// FL                   motor         6               
-// BL                   motor         7               
-// BR                   motor         8               
-// FR                   motor         9               
-// Rlift                motor         14              
-// Llift                motor         12              
-// Controller1          controller                    
-// Clawmotor            motor         13              
-// Pot                  pot           D               
-// Xencode              encoder       E, F            
-// ---- END VEXCODE CONFIGURED DEVICES ----
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// BLimitSwitch         limit         B               
-// TLimitSwitch         limit         C               
-// Gyro                 gyro          A               
-// FL                   motor         6               
-// BL                   motor         7               
-// BR                   motor         8               
-// FR                   motor         9               
-// Rlift                motor         14              
-// Llift                motor         12              
-// Controller1          controller                    
-// Clawmotor            motor         13              
-// Pot                  pot           D               
-// ---- END VEXCODE CONFIGURED DEVICES ----
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// BLimitSwitch         limit         B
-// TLimitSwitch         limit         C
-// Gyro                 gyro          A
-// FL                   motor         6
-// BL                   motor         7
-// BR                   motor         8
-// FR                   motor         9
-// Rlift                motor         14
-// Llift                motor         12
-// Controller1          controller
-// Clawmotor            motor         13
-// Pot                  pot           D
-// Xencode              encoder       E, F
-// ---- END VEXCODE CONFIGURED DEVICES ----
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// BLimitSwitch         limit         B
-// TLimitSwitch         limit         C
-// Gyro                 gyro          A
-// FL                   motor         6
-// BL                   motor         7
-// BR                   motor         8
-// FR                   motor         9
-// Rlift                motor         14
-// Llift                motor         12
-// Controller1          controller
-// Clawmotor            motor         13
-// Pot                  pot           D
-// ---- END VEXCODE CONFIGURED DEVICES ----
+
 #include "vex.h"
 #include "autofunct.h"
 #include "functions.h"
@@ -126,11 +61,34 @@ void autonomous(void) {
   std::cout << "Autonon start" << std::endl;
   Startup();
   std::cout << "Gyro Calibrated" << std::endl;
+  int blue = 1; //set to -1 for blue, 1 for red.
 
-  //int blue = -1; //set to -1 for blue, 1 for red.
-  Pgo(10,12);
+  Autoclaw('c');
+  wait(0.5,sec);
+  DLcontrol(-80);
+  wait(1.0,sec);
+  DLcontrol(0);
+  Pstrafe(20, 12);
+  go(50);
+  wait(2,sec);
+  go(-50);
+  wait(1,sec);
+  halt();
+
+  Autoclaw('o');
+  wait(0.5,sec);
+  Autoclaw('s');
+
+
+/*1pt auton
+  wait(2,sec);
+  go(-100);
+  wait(2,sec);
+  go(50);
+  wait(2,sec);
+  halt();
+*/
 }
-
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*                              User Control Task                            */

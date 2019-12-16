@@ -111,7 +111,7 @@ void DLcontrol(double pwr) {
 }
 
 void Lcontrol() {
-  double pw = 80.08; // How much power the motors should provide RPM
+  double pw = 60.00; // How much power the motors should provide RPM
   // controls the button input for lift
   if (Controller1.ButtonR2.pressing() && BLimitSwitch.pressing() == false) {
     DLcontrol(pw);
