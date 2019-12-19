@@ -1,6 +1,6 @@
 #include "main.h"
-//#include "motorconfig.h"
-#include "functions.h"
+#include "functions.hpp"
+#include "autofunct.hpp"
 /**
  * A callback function for LLEMU's center button.
  *
@@ -75,9 +75,9 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	Task DriveTrain(DriveTrainCallback, , "");
 	int param = 5;
-	task_t DriveTrain = task_create(DriveTrainCallback,param, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "My Task");
+  Task DriveTrain(DriveTrainCallback, &param, "");
+
 	while (true)
 	{
 		pros::delay(20);

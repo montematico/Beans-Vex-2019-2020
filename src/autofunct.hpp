@@ -1,20 +1,34 @@
-#include "vex.h"
+#include "main.h"
 extern double dist[2];
+void OKAPIinit()
+{
+  //Creats drivetrain for OKAPI for auton
+  //Defining what port motors are in
+  const int FLM = 6;
+  const int BLM = 7;
+  const int FRM = 8;
+  const int BRM = 9;
+  //Gives wheel diameter and chassis width for more precise control.
+  const auto Wheel_Diameter = 3.25_in;
+  const auto Chassis_width = 17_in;
 
-void Pturn(int tp)
-// Precise Turn for autonomous tp = how many degrees to turn.
+  auto chassis = ChassisControllerFactory::create(FLM,FRM,BLM,BRM,
+    AbstractMotor::gearset::green,{Wheel_Diameter,Chassis_width});
+
+}
+
 {
   while (Gyro.value(vex::rotationUnits::deg) < tp)
   {
-    FL.spin(vex::directionType::fwd, 50, vex::velocityUnits::rpm);
-    FR.spin(vex::directionType::fwd, 50, vex::velocityUnits::rpm);
-    BL.spin(vex::directionType::fwd, 50, vex::velocityUnits::rpm);
-    BR.spin(vex::directionType::fwd, 50, vex::velocityUnits::rpm);
+    FL.move(50);
+    FR.move(50);
+    BL.move(50);
+    BR.move(50);
   }
-  FL.stop();
-  FR.stop();
-  BL.stop();
-  BR.stop();
+  FL.move(0);
+  FR.move(0);
+  BL.move(0);
+  BR.move(0);
 }
 
 int goCallback(void *pwti)
@@ -31,7 +45,7 @@ int goCallback(void *pwti)
   BL.spin(vex::directionType::fwd, pw, vex::velocityUnits::pct);
   BR.spin(vex::directionType::fwd, rw, vex::velocityUnits::pct);
   if(dis < 0)
-  {   
+  {
     pw *= -1;
   }
   while(fabs(Ydist - dis) >= 0.2)
@@ -57,7 +71,7 @@ void Pgo(float pw, float dis)
   task robogo( goCallback, (void *)&pwti);
 }
 
-int Pstrafecallback(void *pwti) 
+int Pstrafecallback(void *pwti)
 {
   float *x = (float *)pwti; //Does some magic stuff im far to underqualified to explain/understand
   //For some reason naming *x anything else bricks it, im not sure why but whatever I've had too many breakdowns to care.
@@ -116,17 +130,18 @@ void Startup() {
 }
 void motorset()
 {
-  // Sets motor settings
-  Clawmotor.setMaxTorque(100, percentUnits::pct);
-  Xencode.resetRotation();
-  Yencode.resetRotation();
-  Llift.setStopping(hold);
-  Rlift.setStopping(hold);
-  BL.setStopping(coast);
-  BR.setStopping(coast);
-  FL.setStopping(coast);
-  FR.setStopping(coast);
-  Clawmotor.setStopping(hold);
+  //Motors
+  Clawmotor.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+  Llift.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+  Rlif.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+  BL.set_brake_mode(E_MOTOR_BRAKE_COAST);
+  BR.set_brake_mode(E_MOTOR_BRAKE_COAST);
+  FL.set_brake_mode(E_MOTOR_BRAKE_COAST);
+  FR.set_brake_mode(E_MOTOR_BRAKE_COAST);
+  //Encoders
+  Xencode.reset();
+  Yencode.reset();
+
 }
 
 void go(int pw) {

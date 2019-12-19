@@ -1,5 +1,5 @@
 #include "main.h"
-#include "motorconfig.h"
+
 double dist[2]; //Making distane variable global so all code can pull from it.
 
 // Functions makes the code readable.
@@ -9,6 +9,7 @@ double dist[2]; //Making distane variable global so all code can pull from it.
 int Goff = 0; // Gyroscope offset, set to zero because its non functional
 void DriveTrainCallback(void* param)
 {
+  //void* param
   while(true)
   {
     double FLI = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
@@ -20,6 +21,7 @@ void DriveTrainCallback(void* param)
     BL.move(BLI);
     FR.move(FRI);
     BR.move(BRI);
+    delay(2);
   }
   //return 1;
 }
