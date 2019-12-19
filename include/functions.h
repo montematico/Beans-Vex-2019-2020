@@ -1,68 +1,44 @@
-#include "vex.h"
+#include "main.h"
+#include "motorconfig.h"
 double dist[2]; //Making distane variable global so all code can pull from it.
 
 // Functions makes the code readable.
 // Making Drive Train Variables Global
-int FLI;
-int BLI;
-int FRI;
-int BRI;
+
 // More Variables for gnocchi code
 int Goff = 0; // Gyroscope offset, set to zero because its non functional
-int DriveTrainCallback()
+void DriveTrainCallback(void* param)
 {
   while(true)
   {
-   FLI = Controller1.Axis3.position(vex::percentUnits::pct) +
-        (1 * Controller1.Axis4.position(vex::percentUnits::pct)) +
-        Controller1.Axis1.position(vex::percentUnits::pct) - Goff;
-    BLI = Controller1.Axis3.position(vex::percentUnits::pct) -
-        (1 * Controller1.Axis4.position(vex::percentUnits::pct)) +
-        Controller1.Axis1.position(vex::percentUnits::pct) - Goff;
-    FRI = (-1 * Controller1.Axis3.position(vex::percentUnits::pct)) +
-        (1 * Controller1.Axis4.position(vex::percentUnits::pct)) +
-        Controller1.Axis1.position(vex::percentUnits::pct) - Goff;
-    BRI = (-1 * Controller1.Axis3.position(vex::percentUnits::pct)) -
-        (1 * Controller1.Axis4.position(vex::percentUnits::pct)) +
-        Controller1.Axis1.position(vex::percentUnits::pct) - Goff;
+    double FLI = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
+    double BLI = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y) - controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
+    double FRI = (-1 * controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) + controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
+    double BRI = (-1 * controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) - controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
 
-  FL.spin(vex::directionType::fwd, FLI, vex::velocityUnits::pct);
-  BL.spin(vex::directionType::fwd, BLI, vex::velocityUnits::pct);
-  FR.spin(vex::directionType::fwd, FRI, vex::velocityUnits::pct);
-  BR.spin(vex::directionType::fwd, BRI, vex::velocityUnits::pct);
+    FL.move(FLI);
+    BL.move(BLI);
+    FR.move(FRI);
+    BR.move(BRI);
   }
-  return 1;
+  //return 1;
 }
-void DriveTrain(bool run) // Contains code for driving motors
+void DriveTrain() // Contains code for driving motors
 {
-  // All values that need to be calculated for the x-drive
-  // https://www.youtube.com/watch?v=1-Ju_VqYLAU
-  // Todo Read Gyro and offset "forward" for Field Centric Drive
-  // If you really hate yourself add more Gyro's and average values to clean up
-  // errors If you truly hate yourself use linesensors to check when you go over
-  // the line and reset the gyro to keep it accurate
- if(run)
- {
-    FLI = Controller1.Axis3.position(vex::percentUnits::pct) +
-        (1 * Controller1.Axis4.position(vex::percentUnits::pct)) +
-        Controller1.Axis1.position(vex::percentUnits::pct) - Goff;
-    BLI = Controller1.Axis3.position(vex::percentUnits::pct) -
-        (1 * Controller1.Axis4.position(vex::percentUnits::pct)) +
-        Controller1.Axis1.position(vex::percentUnits::pct) - Goff;
-    FRI = (-1 * Controller1.Axis3.position(vex::percentUnits::pct)) +
-        (1 * Controller1.Axis4.position(vex::percentUnits::pct)) +
-        Controller1.Axis1.position(vex::percentUnits::pct) - Goff;
-    BRI = (-1 * Controller1.Axis3.position(vex::percentUnits::pct)) -
-        (1 * Controller1.Axis4.position(vex::percentUnits::pct)) +
-        Controller1.Axis1.position(vex::percentUnits::pct) - Goff;
+   double FLI = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y) + controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
+   double BLI = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y) - controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
+   double FRI = (-1 * controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) + controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
+   double BRI = (-1 * controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) - controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
 
-  FL.spin(vex::directionType::fwd, FLI, vex::velocityUnits::pct);
-  BL.spin(vex::directionType::fwd, BLI, vex::velocityUnits::pct);
-  FR.spin(vex::directionType::fwd, FRI, vex::velocityUnits::pct);
-  BR.spin(vex::directionType::fwd, BRI, vex::velocityUnits::pct);
- } else {} //blank because break command was acting up
-
+   FL.move(FLI);
+   BL.move(BLI);
+   FR.move(FRI);
+   BR.move(BRI);
+   pros::delay(2);
 }
+/* VOIDING IS HERE IDIOT
+LOOK HERE
+LOOK
 
 void NorthTurn(int dir)
 {
@@ -155,7 +131,8 @@ void ClawControl()
   {
     Clawmotor.stop();
   }
-  
+
+*/ //DELETE THIS IDIOT LOOK HERE LOOK HERE LOOK HERE LOOK HERE LOOK HERE
 
   //When I need to manually control claw
   /*
@@ -170,6 +147,7 @@ void ClawControl()
     Clawmotor.stop();
   }
   */
+  /* MORE CODE GONE
 }
 void encoderreturn()
 {
@@ -231,3 +209,4 @@ void Gcode() {
   Brain.Screen.printAt(20, 40, "Pot Reading %f",Pot.value(vex::rotationUnits::deg));
   Brain.Screen.printAt(20, 80, "X: %f Y: %f",dist[0], dist[1] );
 }
+*/

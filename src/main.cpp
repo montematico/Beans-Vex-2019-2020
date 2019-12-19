@@ -1,5 +1,6 @@
 #include "main.h"
-
+//#include "motorconfig.h"
+#include "functions.h"
 /**
  * A callback function for LLEMU's center button.
  *
@@ -35,7 +36,7 @@ void initialize() {
  * the robot is enabled, this task will exit.
  */
 void disabled() {}
-
+//Pre auton
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
  * Management System or the VEX Competition Switch. This is intended for
@@ -74,19 +75,12 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor left_mtr(1);
-	pros::Motor right_mtr(2);
-
-	while (true) {
-		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
-		int left = master.get_analog(ANALOG_LEFT_Y);
-		int right = master.get_analog(ANALOG_RIGHT_Y);
-
-		left_mtr = left;
-		right_mtr = right;
+	Task DriveTrain(DriveTrainCallback, , "");
+	int param = 5;
+	task_t DriveTrain = task_create(DriveTrainCallback,param, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "My Task");
+	while (true)
+	{
 		pros::delay(20);
+		printf("multi");
 	}
 }
