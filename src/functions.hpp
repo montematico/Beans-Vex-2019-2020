@@ -1,4 +1,5 @@
 #include "main.h"
+#include "motorconfig.hpp"
 
 double dist[2]; //Making distane variable global so all code can pull from it.
 
@@ -23,7 +24,6 @@ void DriveTrainCallback(void* param)
     BR.move(BRI);
     delay(2);
   }
-  //return 1;
 }
 void DriveTrain() // Contains code for driving motors
 {
@@ -38,9 +38,6 @@ void DriveTrain() // Contains code for driving motors
    BR.move(BRI);
    pros::delay(2);
 }
-/* VOIDING IS HERE IDIOT
-LOOK HERE
-LOOK
 
 void NorthTurn(int dir)
 {
@@ -49,27 +46,28 @@ void NorthTurn(int dir)
   while ( fabs(dir - Gyro.value(vex::rotationUnits::deg)) >= 3)
   {
 
-    FL.spin(vex::directionType::fwd, pwr, vex::velocityUnits::rpm);
-    FR.spin(vex::directionType::fwd, pwr, vex::velocityUnits::rpm);
-    BL.spin(vex::directionType::fwd, pwr, vex::velocityUnits::rpm);
-    BR.spin(vex::directionType::fwd, pwr, vex::velocityUnits::rpm);
+    FL.move(pwr);
+    FR.move(pwr);
+    BL.move(pwr);
+    BR.move(pwr);
   }
-  FL.stop();
-  FR.stop();
-  BL.stop();
-  BR.stop();
+  FL.move(0);
+  FR.move(0);
+  BL.move(0);
+  BR.move(0);
 }
+
 void Ncheck()
 {
-  if(Controller1.ButtonUp.pressing()) {
+  if(controller.get_digital(E_CONTROLLER_DIGITAL_UP)) {
     NorthTurn(0);}
-  else if(Controller1.ButtonRight.pressing()){
+  else if(Controller.get_digital(E_CONTROLLER_DIGITAL_RIGHT)){
     NorthTurn(270);}
-  else if(Controller1.ButtonLeft.pressing()){
+  else if(controller.get_digital(E_CONTROLLER_DIGITAL_LEFT)){
     NorthTurn(90);}
-  else if(Controller1.ButtonDown.pressing()){
+  else if(controller.get_digital(E_CONTROLLER_DIGITAL_DOWN)){
     NorthTurn(180);}
-  else if(Controller1.ButtonY.pressing())
+  else if(controller.get_digital(E_CONTROLLER_DIGITAL_Y))
     {
       Gyro.setHeading(0,degrees); //Sets new "north" if Y button is pressed
     }
@@ -80,22 +78,24 @@ void DLcontrol(double pwr) {
   // uses pwr as a -100-100 integer for controlling both lift motors
   //Also used in autonamous code to raise and lower lift.
   if (pwr != 0) {
-    Llift.spin(vex::directionType::fwd, pwr, vex::velocityUnits::rpm);
-    Rlift.spin(vex::directionType::fwd, pwr, vex::velocityUnits::rpm);
+    Llift.move(pwr);
+    Rlift.move(pwr);
   } else {
-    Llift.stop();
-    Rlift.stop();
+    Llift.move(0);
+    Rlift.move(0);
   }
 }
 
 void Lcontrol() {
   double pw = 60.00; // How much power the motors should provide RPM
   // controls the button input for lift
-  if (Controller1.ButtonR2.pressing() && BLimitSwitch.pressing() == false) {
+  if (controller.get_digital(E_CONTROLLER_DIGITAL_R2))
+   {
     DLcontrol(pw);
-  } else if (Controller1.ButtonR1.pressing() && TLimitSwitch.pressing() == false) {
+  } else if (controller.get_digital(E_CONTROLLER_DIGITAL_R1)) {
     DLcontrol(-1 * pw);
-  } else {
+  } else
+  {
     // Stops the lift if no button is being held
     DLcontrol(0);
   }
@@ -103,15 +103,15 @@ void Lcontrol() {
 
 void MotorStop()
 {
-  FL.stop();
-  BL.stop();
-  BR.stop();
-  FR.stop();
-  Rlift.stop();
-  Llift.stop();
-  Clawmotor.stop();
+  FL.move(0);
+  BL.move(0);
+  BR.move(0);
+  FR.move(0);
+  Rlift.move(0);
+  Llift.move(0);
+  Clawmotor.move(0);
 }
-
+/*
 void ClawControl()
 {
   float opened = 30; //Pot values when opened

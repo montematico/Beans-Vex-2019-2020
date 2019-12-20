@@ -1,4 +1,6 @@
 #include "main.h"
+#include "motorconfig.hpp"
+
 extern double dist[2];
 void OKAPIinit()
 {
@@ -12,8 +14,8 @@ void OKAPIinit()
   const auto Wheel_Diameter = 3.25_in;
   const auto Chassis_width = 17_in;
 
-  auto chassis = ChassisControllerFactory::create(FLM,FRM,BLM,BRM,
-    AbstractMotor::gearset::green,{Wheel_Diameter,Chassis_width});
+  auto chassis = okapi::ChassisControllerFactory::create(FLM,FRM,BLM,BRM,
+    okapi::AbstractMotor::gearset::green,{Wheel_Diameter,Chassis_width});
 }
 /*
 void Startup() {
@@ -54,7 +56,7 @@ void motorset()
 void Autoclaw(char x)
 {
   float speed = 30.0;
-  if(x == 'c') //Check if you're doing the wirhgt math here.
+  if(x == 'c')
   {
     Clawmotor.move(speed);
   } else if (x == 'o')

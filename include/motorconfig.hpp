@@ -1,5 +1,7 @@
 #include "main.h"
 using namespace pros;
+
+
 //Controller
 pros::Controller controller (E_CONTROLLER_MASTER);
 
@@ -17,6 +19,7 @@ pros::Motor Llift (12,E_MOTOR_GEARSET_36,false);
 pros::Motor Clawmotor (15,E_MOTOR_GEARSET_36,false);
 
 //3 wire
+
 pros::ADIGyro Gyro (1);
 pros::ADIPotentiometer Pot (4);
 pros::ADIEncoder Xencode(5,6);
