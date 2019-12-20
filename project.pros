@@ -1,7 +1,7 @@
 {
     "py/object": "pros.conductor.project.Project",
     "py/state": {
-        "project_name": "Pros Test",
+        "project_name": "Beans-Vex-2019-2020",
         "target": "v5",
         "templates": {
             "kernel": {

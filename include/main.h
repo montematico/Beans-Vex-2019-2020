@@ -12,7 +12,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-
+#ifndef _PROS_MAIN_H_
 #define _PROS_MAIN_H_
 
 /**
@@ -35,12 +35,13 @@
 #define PROS_USE_LITERALS
 
 #include "api.h"
-#include "motorconfig.hpp"
+
 /**
  * You should add more #includes here
  */
+
 #include "okapi/api.hpp"
-//#include "pros/api_legacy.h"
+#include "pros/api_legacy.h"
 
 /**
  * If you find doing pros::Motor() to be tedious and you'd prefer just to do
@@ -72,10 +73,11 @@ void opcontrol(void);
 #endif
 
 #ifdef __cplusplus
+#include "motorconfig.hpp"
 /**
  * You can add C++-only headers here
  */
-//#include <iostream>
+#include <iostream>
 #endif
 
 #endif  // _PROS_MAIN_H_
