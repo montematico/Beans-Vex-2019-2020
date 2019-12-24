@@ -1,5 +1,5 @@
 #include "main.h"
-#include "motorconfig.hpp"
+
 
 double dist[2]; //Making distane variable global so all code can pull from it.
 
@@ -61,7 +61,7 @@ void Ncheck()
 {
   if(controller.get_digital(E_CONTROLLER_DIGITAL_UP)) {
     NorthTurn(0);}
-  else if(Controller.get_digital(E_CONTROLLER_DIGITAL_RIGHT)){
+  else if(controller.get_digital(E_CONTROLLER_DIGITAL_RIGHT)){
     NorthTurn(270);}
   else if(controller.get_digital(E_CONTROLLER_DIGITAL_LEFT)){
     NorthTurn(90);}
