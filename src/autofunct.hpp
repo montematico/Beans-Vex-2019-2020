@@ -19,6 +19,8 @@ void OKAPIinit()
 }
 /*
 void Startup() {
+  //Initializes LCD emulator
+  pros::lcd::initialize();
   // Calibrates Gyro
   Controller1.Screen.clearScreen();
   Controller1.Screen.print("Calibrating...");
@@ -67,4 +69,9 @@ void Autoclaw(char x)
   {
     Clawmotor.move(0);
   }
+}
+
+void AutonSelect0()
+{
+  bool auton[3] = {true,false,false};
 }

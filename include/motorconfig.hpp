@@ -20,7 +20,7 @@ pros::Motor Clawmotor (15,E_MOTOR_GEARSET_36,false);
 
 //3 wire
 
-pros::ADIGyro Gyro (1);
+pros::ADIGyro Gyro (1,0.1);
 pros::ADIPotentiometer Pot (4);
 pros::ADIEncoder Xencode(5,6);
 pros::ADIEncoder Yencode(7,8);

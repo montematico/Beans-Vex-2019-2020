@@ -43,7 +43,7 @@ void NorthTurn(int dir)
 {
   int pwr = 50; //turn rate 0-100 %
 
-  while ( fabs(dir - Gyro.value(vex::rotationUnits::deg)) >= 3)
+  while ( fabs(dir - Gyro.get_value()) >= 3)
   {
 
     FL.move(pwr);
@@ -69,7 +69,7 @@ void Ncheck()
     NorthTurn(180);}
   else if(controller.get_digital(E_CONTROLLER_DIGITAL_Y))
     {
-      Gyro.setHeading(0,degrees); //Sets new "north" if Y button is pressed
+      Gyro.reset(); //Sets new "north" if Y button is pressed
     }
 }
 
@@ -111,51 +111,28 @@ void MotorStop()
   Llift.move(0);
   Clawmotor.move(0);
 }
-/*
+
 void ClawControl()
 {
-  float opened = 30; //Pot values when opened
-  float closed = 55; //When Closed
-  float spalyed = 0; //When opened all the way, kindof usuless but could be useful later for easier calibration.
-  string status = "test"; //Status of claw, c,o,d (close, open, done)
-  float degerror = 5.0; //Acceptable degrees of error in the pot
-  float Pote = Pot.angle(rotationUnits::deg); // reads pot value. here because of laziness
   int speed = 30; //sets speed of motors.
 
-
-  if(Controller1.ButtonL1.pressing() && Pote <= closed) //Check if you're doing the wirhgt math here.
+  if(Controller1.ButtonL1.pressing()) //Check if you're doing the wirhgt math here.
   {
-    Clawmotor.spin(vex::directionType::fwd, speed, vex::velocityUnits::rpm);
-  } else if(Controller1.ButtonL2.pressing() && Pote <= opened)
-  {
-    Clawmotor.spin(vex::directionType::rev, speed, vex::velocityUnits::rpm);
-  } else
-  {
-    Clawmotor.stop();
-  }
-
-*/ //DELETE THIS IDIOT LOOK HERE LOOK HERE LOOK HERE LOOK HERE LOOK HERE
-
-  //When I need to manually control claw
-  /*
-   if(Controller1.ButtonL1.pressing())
-  {
-    Clawmotor.spin(vex::directionType::fwd, 10, vex::velocityUnits::rpm);
+    Clawmotor.move(speed);
   } else if(Controller1.ButtonL2.pressing())
   {
-    Clawmotor.spin(vex::directionType::fwd, -10, vex::velocityUnits::rpm);
+    Clawmotor.move(-speed);
   } else
   {
-    Clawmotor.stop();
+    Clawmotor.move(0);
   }
-  */
-  /* MORE CODE GONE
 }
+
 void encoderreturn()
 {
   //Returns an array with x,y distance travelled in inches.
-  double Xdist = Xencode.position(rotationUnits::deg);
-  double Ydist = Yencode.position(rotationUnits::deg);
+  double Xdist = Xencode.get_value();
+  double Ydist = Yencode.get_value();
   //Converts degrees to radiians.
   Xdist = Xdist * (3.1415926535897932/180); //This uses more digits of pi than NASA lmao.
   Ydist = Ydist * (3.1415926535897932/180); //Nasa only used 15, our Superior code uses 16. :)
@@ -170,7 +147,7 @@ void encoderreturn()
 double Xreturn()
 {
   //Returns an array with x,y distance travelled in inches.
-  double Xdist = Xencode.position(rotationUnits::deg);
+  double Xdist = Xencode.get_value());
   //Converts degrees to radiians.
   Xdist = Xdist * (3.1415926535897932/180); //This uses more digits of pi than NASA lmao.
   //Nasa only used 15, our Superior code uses 16. :)
@@ -181,9 +158,8 @@ double Xreturn()
 
 double Yreturn()
 {
-{
   //Returns an array with x,y distance travelled in inches.
-  double Ydist = Yencode.position(rotationUnits::deg);
+  double Ydist = Yencode.get_value();
   //Converts degrees to radiians.
   Ydist = Ydist * (3.1415926535897932/180); //This uses more digits of pi than NASA lmao.
   //Nasa only used 15, our Superior code uses 16. :)
@@ -191,13 +167,12 @@ double Yreturn()
   // ArcLength = θ * r.  θ in radii.
   return Ydist;
 }
-}
 
 void Gcode() {
 
     //Returns an array with x,y distance travelled in inches.
-  double Xdist = Xencode.position(rotationUnits::deg);
-  double Ydist = Yencode.position(rotationUnits::deg);
+  double Xdist = Xencode.get_value();
+  double Ydist = Yencode.get_valie();
   //Converts degrees to radiians.
   Xdist = Xdist * (3.1415926535897932/180); //This uses more digits of pi than NASA lmao.
   Ydist = Ydist * (3.1415926535897932/180); //Nasa only used 15, our Superior code uses 16. :)
@@ -211,4 +186,3 @@ void Gcode() {
   Brain.Screen.printAt(20, 40, "Pot Reading %f",Pot.value(vex::rotationUnits::deg));
   Brain.Screen.printAt(20, 80, "X: %f Y: %f",dist[0], dist[1] );
 }
-*/
