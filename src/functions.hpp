@@ -87,7 +87,7 @@ void DLcontrol(double pwr) {
 }
 
 void Lcontrol() {
-  double pw = 60.00; // How much power the motors should provide RPM
+  double pw = 100.00; // How much power the motors should provide RPM
   // controls the button input for lift
   if (controller.get_digital(E_CONTROLLER_DIGITAL_R2))
    {
@@ -166,24 +166,4 @@ double Yreturn()
   Ydist *= 1.375; //Uses ark length formula to calculate distance travelled in inches
   // ArcLength = θ * r.  θ in radii.
   return Ydist;
-}
-
-void Gcode() {
-  /*
-  //Returns an array with x,y distance travelled in inches.
-  double Xdist = Xencode.get_value();
-  double Ydist = Yencode.get_value();
-  //Converts degrees to radiians.
-  Xdist = Xdist * (3.1415926535897932/180); //This uses more digits of pi than NASA lmao.
-  Ydist = Ydist * (3.1415926535897932/180); //Nasa only used 15, our Superior code uses 16. :)
-  Xdist *= 1.375; //Uses ark length formula to calculate distance travelled in inches
-  Ydist *= 1.375; // ArcLength = θ * r.  θ in radii.
-  double dist[2] = {Xdist, Ydist};
-
-  Brain.Screen.clearScreen();
-  Controller1.Screen.clearScreen();
-  Brain.Screen.setFont(vex::mono20);
-  Brain.Screen.printAt(20, 40, "Pot Reading %f",Pot.value(vex::rotationUnits::deg));
-  Brain.Screen.printAt(20, 80, "X: %f Y: %f",dist[0], dist[1] );
-  */
 }
