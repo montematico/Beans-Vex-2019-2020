@@ -1,7 +1,7 @@
 #include "main.h"
 #include "functions.hpp"
 #include "autofunct.hpp"
-/**
+/*
  * A callback function for LLEMU's center button.
  *
  * When this callback is fired, it will toggle line 2 of the LCD text between
@@ -24,6 +24,7 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+	motorset();
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello PROS User!");
 
@@ -48,8 +49,6 @@ void disabled() {}
  */
 void competition_initialize()
 {
-		pros::lcd::register_btn0_cb(AutonSelect);
-
 }
 
 /**
@@ -65,7 +64,7 @@ void competition_initialize()
  */
 void autonomous()
 {
-	bool auton[3] = {false,false,false};
+//	bool auton[3] = {false,false,false};
 
 }
 
@@ -83,12 +82,15 @@ void autonomous()
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	motorset();
 	int param = 5;
   Task DriveTrain(DriveTrainCallback, &param, "");
 
 	while (true)
 	{
+		Ncheck();
+		Lcontrol();
+		ClawControl();
 		pros::delay(20);
-		printf("multi");
 	}
 }

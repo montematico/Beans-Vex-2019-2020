@@ -13,7 +13,7 @@ void DriveTrainCallback(void* param)
   //void* param
   while(true)
   {
-    double FLI = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
+    double FLI = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y) + controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
     double BLI = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y) - controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
     double FRI = (-1 * controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) + controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
     double BRI = (-1 * controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) - controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
@@ -116,10 +116,10 @@ void ClawControl()
 {
   int speed = 30; //sets speed of motors.
 
-  if(Controller1.ButtonL1.pressing()) //Check if you're doing the wirhgt math here.
+  if(controller.get_digital(E_CONTROLLER_DIGITAL_L1))
   {
-    Clawmotor.move(speed);
-  } else if(Controller1.ButtonL2.pressing())
+     Clawmotor.move(speed);
+  } else if(controller.get_digital(E_CONTROLLER_DIGITAL_L2))
   {
     Clawmotor.move(-speed);
   } else
@@ -147,7 +147,7 @@ void encoderreturn()
 double Xreturn()
 {
   //Returns an array with x,y distance travelled in inches.
-  double Xdist = Xencode.get_value());
+  double Xdist = Xencode.get_value();
   //Converts degrees to radiians.
   Xdist = Xdist * (3.1415926535897932/180); //This uses more digits of pi than NASA lmao.
   //Nasa only used 15, our Superior code uses 16. :)
@@ -169,10 +169,10 @@ double Yreturn()
 }
 
 void Gcode() {
-
-    //Returns an array with x,y distance travelled in inches.
+  /*
+  //Returns an array with x,y distance travelled in inches.
   double Xdist = Xencode.get_value();
-  double Ydist = Yencode.get_valie();
+  double Ydist = Yencode.get_value();
   //Converts degrees to radiians.
   Xdist = Xdist * (3.1415926535897932/180); //This uses more digits of pi than NASA lmao.
   Ydist = Ydist * (3.1415926535897932/180); //Nasa only used 15, our Superior code uses 16. :)
@@ -185,4 +185,5 @@ void Gcode() {
   Brain.Screen.setFont(vex::mono20);
   Brain.Screen.printAt(20, 40, "Pot Reading %f",Pot.value(vex::rotationUnits::deg));
   Brain.Screen.printAt(20, 80, "X: %f Y: %f",dist[0], dist[1] );
+  */
 }
