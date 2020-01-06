@@ -17,27 +17,7 @@ void OKAPIinit()
   auto chassis = okapi::ChassisControllerFactory::create(FLM,FRM,BLM,BRM,
     okapi::AbstractMotor::gearset::green,{Wheel_Diameter,Chassis_width});
 }
-/*
-void Startup() {
-  //Initializes LCD emulator
-  pros::lcd::initialize();
-  // Calibrates Gyro
-  Controller1.Screen.clearScreen();
-  Controller1.Screen.print("Calibrating...");
-  Controller1.Screen.newLine();
-  Controller1.rumble(".");
 
-  Brain.Screen.setFont(vex::mono40);
-  Brain.Screen.printAt(1, 40, "Calibrating...");
-  Gyro.startCalibration();
-  wait(0, sec);
-  Brain.Screen.clearScreen();
-  Brain.Screen.printAt(1, 40, "Done");
-  Controller1.Screen.clearScreen();
-  Controller1.Screen.print("Done");
-  Controller1.rumble("..");
-}
-*/
 void motorset()
 {
   //Motors

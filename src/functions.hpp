@@ -114,7 +114,7 @@ void MotorStop()
 
 void ClawControl()
 {
-  int speed = 30; //sets speed of motors.
+  int speed = 60; //sets speed of motors.
 
   if(controller.get_digital(E_CONTROLLER_DIGITAL_L1))
   {

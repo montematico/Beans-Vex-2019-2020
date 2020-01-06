@@ -49,6 +49,7 @@ void disabled() {}
  */
 void competition_initialize()
 {
+
 }
 
 /**
@@ -64,8 +65,8 @@ void competition_initialize()
  */
 void autonomous()
 {
-//	bool auton[3] = {false,false,false};
-
+	OKAPIinit();
+	controller.rumble("..-");
 }
 
 /**
@@ -82,6 +83,7 @@ void autonomous()
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	controller.rumble("..");
 	motorset();
 	int param = 5;
   Task DriveTrain(DriveTrainCallback, &param, "");
