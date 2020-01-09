@@ -50,3 +50,62 @@ void Autoclaw(char x)
     Clawmotor.move(0);
   }
 }
+void halt()
+{
+  FL.move(0);
+  BL.move(0);
+  BR.move(0);
+  FR.move(0);
+}
+void go(double pw,double ti)
+{
+  double pwti[2] = {pw,ti};
+  FL.move(pwti[0]);
+  BL.move(pwti[0]);
+  FR.move(-pwti[0]);
+  BR.move(-pwti[0]);
+  pros::Task::delay(pwti[1]);
+  halt();
+}
+void strafe(double pw,double ti)
+{
+  double pwti[2] = {pw,ti};
+  FL.move(-pwti[0]);
+  BL.move(pwti[0]);
+  FR.move(-pwti[0]);
+  BR.move(pwti[0]);
+  pros::Task::delay(pwti[1]);
+  halt();
+}
+void go_caller(void* param)
+ {
+  double *pwti = (double *)pwti;
+  //cantfoolme
+  std::printf("Pw: %f, Ti: %f",pwti[0],pwti[1]);
+  FL.move(pwti[0]);
+  BL.move(pwti[0]);
+  FR.move(-pwti[0]);
+  BR.move(-pwti[0]);
+  pros::Task::delay(pwti[1]);
+  halt();
+}
+void Mgo(double pw,double ti) {
+  std::printf("Mgo is running");
+  double pwti[2] = {pw,ti};
+  Task gocaller(go_caller, &pwti, "Gocaller");
+}
+
+void str_caller(void* param)
+ {
+  double *pwti = (double *)pwti;
+  FL.move(-pwti[0]);
+  BL.move(pwti[0]);
+  FR.move(-pwti[0]);
+  BR.move(pwti[0]);
+  pros::Task::delay(pwti[1]);
+  halt();
+}
+void Mstr(double pw,double ti) {
+  double pwti[2] = {pw,ti};
+  Task strcaller(str_caller, &pwti, "STRcaller");
+}

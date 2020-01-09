@@ -65,8 +65,11 @@ void competition_initialize()
  */
 void autonomous()
 {
+	motorset();
 	OKAPIinit();
 	controller.rumble("..-");
+	go(100,4);
+	controller.rumble("-..");
 }
 
 /**
