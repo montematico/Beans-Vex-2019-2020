@@ -6,10 +6,10 @@ using namespace pros;
 pros::Controller controller (E_CONTROLLER_MASTER);
 
 //DriveTrain
-pros::Motor FL (6,E_MOTOR_GEARSET_18,true);
+pros::Motor FL (6,E_MOTOR_GEARSET_18,false);
 pros::Motor BL (7,E_MOTOR_GEARSET_18,false);
 pros::Motor BR (8,E_MOTOR_GEARSET_18,false);
-pros::Motor FR (9,E_MOTOR_GEARSET_18,true);
+pros::Motor FR (9,E_MOTOR_GEARSET_18,false);
 
 //Lift
 pros::Motor Rlift (14,E_MOTOR_GEARSET_36,true);

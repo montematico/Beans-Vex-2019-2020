@@ -27,6 +27,7 @@ void initialize() {
 	motorset();
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello PROS User!");
+	pros::Task::delay(500);
 
 	pros::lcd::register_btn1_cb(on_center_button);
 }
@@ -68,7 +69,8 @@ void autonomous()
 	motorset();
 	OKAPIinit();
 	controller.rumble("..-");
-	go(100,4);
+	go(-50,8);
+	go(25,6);
 	controller.rumble("-..");
 }
 

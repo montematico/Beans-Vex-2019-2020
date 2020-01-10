@@ -18,9 +18,9 @@ void DriveTrainCallback(void* param)
     double FRI = (-1 * controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) + controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
     double BRI = (-1 * controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) - controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
 
-    FL.move(FLI);
+    FL.move(-FLI);
     BL.move(BLI);
-    FR.move(FRI);
+    FR.move(-FRI);
     BR.move(BRI);
     delay(2);
   }

@@ -59,34 +59,36 @@ void halt()
 }
 void go(double pw,double ti)
 {
-  double pwti[2] = {pw,ti};
-  FL.move(pwti[0]);
-  BL.move(pwti[0]);
-  FR.move(-pwti[0]);
-  BR.move(-pwti[0]);
-  pros::Task::delay(pwti[1]);
+  pw *= 1.27;
+  FL.move(-pw);
+  BL.move(pw);
+  FR.move(pw);
+  BR.move(-pw);
+  pros::lcd::set_text(1, "Moving forward");
+  pros::Task::delay(ti*1000);
   halt();
 }
 void strafe(double pw,double ti)
 {
-  double pwti[2] = {pw,ti};
-  FL.move(-pwti[0]);
-  BL.move(pwti[0]);
-  FR.move(-pwti[0]);
-  BR.move(pwti[0]);
-  pros::Task::delay(pwti[1]);
+  pw *= 1.27;
+  FL.move(pw);
+  BL.move(pw);
+  FR.move(pw);
+  BR.move(pw);
+  pros::lcd::set_text(1, "strafing");
+  pros::Task::delay(ti*1000);
   halt();
 }
 void go_caller(void* param)
  {
   double *pwti = (double *)pwti;
-  //cantfoolme
-  std::printf("Pw: %f, Ti: %f",pwti[0],pwti[1]);
-  FL.move(pwti[0]);
+  pwti[0] *= 1.27;
+  FL.move(-pwti[0]);
   BL.move(pwti[0]);
-  FR.move(-pwti[0]);
+  FR.move(pwti[0]);
   BR.move(-pwti[0]);
-  pros::Task::delay(pwti[1]);
+  pros::lcd::set_text(1, "Moving forward (m)");
+  pros::Task::delay(pwti[1]*1000);
   halt();
 }
 void Mgo(double pw,double ti) {
