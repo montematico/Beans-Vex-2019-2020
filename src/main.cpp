@@ -37,7 +37,16 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {}
+void disabled() {
+	motorset();
+	pros::lcd::initialize();
+	pros::lcd::set_text(2, "Get B E A N E D!");
+	pros::Task::delay(100);
+	pros::lcd::set_text(4, "Get B E A N E D!");
+	pros::Task::delay(100);
+	pros::lcd::set_text(6, "Get B E A N E D!");
+	pros::Task::delay(100);
+}
 //Pre auton
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -68,10 +77,24 @@ void autonomous()
 {
 	motorset();
 	OKAPIinit();
+	if(false){
+	//1pt auton
 	controller.rumble("..-");
-	go(-50,8);
-	go(25,6);
+	go(-100,3);
+	go(100,2);
 	controller.rumble("-..");
+	}
+	if(true){
+		//1pt Claw
+		go(100,0.2);
+		go(-100,0.2);
+		pros::Task::delay(500);
+		Autoclaw('o');
+		pros::Task::delay(1000);
+		Autoclaw('s');
+		go(-25,2);
+		controller.rumble("..");
+	}
 }
 
 /**
