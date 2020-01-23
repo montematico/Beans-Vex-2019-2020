@@ -59,7 +59,7 @@ void disabled() {
  */
 void competition_initialize()
 {
-
+motorset();
 }
 
 /**
@@ -76,25 +76,22 @@ void competition_initialize()
 void autonomous()
 {
 	motorset();
-	OKAPIinit();
-	if(false){
-	//1pt auton
-	controller.rumble("..-");
-	go(-100,3);
-	go(100,2);
-	controller.rumble("-..");
-	}
-	if(true){
-		//1pt Claw
-		go(100,0.2);
-		go(-100,0.2);
-		pros::Task::delay(500);
-		Autoclaw('o');
-		pros::Task::delay(1000);
-		Autoclaw('s');
-		go(-25,2);
-		controller.rumble("..");
-	}
+	go(50,0.5);
+	go(-50,0.25);
+	Autoclaw('o');
+	pros::Task::delay(500);
+	DLcontrol(50);
+	pros::Task::delay(500);
+	Autoclaw('c');
+	pros::Task::delay(1000);
+	DLcontrol(-50);
+	strafe(-50, 4);
+	DLcontrol(0);
+	strafe(-70,1);
+	Autoclaw('o');
+	pros::Task::delay(250);
+	Autoclaw('s');
+
 }
 
 /**
