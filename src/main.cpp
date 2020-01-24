@@ -1,201 +1,123 @@
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// BLimitSwitch         limit         B               
-// TLimitSwitch         limit         C               
-// Gyro                 gyro          A               
-// FL                   motor         6               
-// BL                   motor         7               
-// BR                   motor         8               
-// FR                   motor         9               
-// Rlift                motor         14              
-// Llift                motor         12              
-// Controller1          controller                    
-// Clawmotor            motor         13              
-// Pot                  pot           D               
-// ---- END VEXCODE CONFIGURED DEVICES ----
-#include "autofunct.h"
-#include "functions.h"
-#include "vex.h"
-
-
-using namespace vex;
-
-// A global instance of competition
-competition Competition;
-
-// define your global instances of motors and other devices here
-
-/*---------------------------------------------------------------------------*/
-/*                          Pre-Autonomous Functions                         */
-/*                                                                           */
-/*  You may want to perform some actions before the competition starts.      */
-/*  Do them in the following function.  You must return from this function   */
-/*  or the autonomous and usercontrol tasks will not be started.  This       */
-/*  function is only called once after the V5 has been powered on and        */
-/*  not every time that the robot is disabled.                               */
-/*---------------------------------------------------------------------------*/
-
-void pre_auton(void) {
-  motorset();
-  // Initializing Robot Configuration. DO NOT REMOVE!
-  vexcodeInit();
-  // Add gui autocode selector
-  // All activities that occur before the competition starts
-  // Example: clearing encoders, setting servo positions, ...
-}
-
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*                              Autonomous Task                              */
-/*                                                                           */
-/*  This task is used to control your robot during the autonomous phase of   */
-/*  a VEX Competition.                                                       */
-/*                                                                           */
-/*  You must modify the code to add your own robot specific commands here.   */
-/*---------------------------------------------------------------------------*/
-
-void autonomous(void) {
-  std::cout << "Autonon start" << std::endl;
-  Startup();
-  std::cout << "Gyro Calibrated" << std::endl;
-
-  int blue = -1; //set to -1 for blue, 1 for red.
-  // Yanks lift up and done to deploy claw.
-  if (true) //Strafe code
-  {
-    go(50);
-    Autoclaw('c');
-    wait(0.3, sec);
-    Autoclaw('s');
-    wait(0.2,sec);
-    halt();
-
-    DLcontrol(-80);
-    Pgo(12.5, 1.0);
-    DLcontrol(0);
-    std::cout << "Claw Deployed" << std::endl;
-    Brain.Screen.printAt(1, 60, "Claw Deployed");
-    std::cout << "Claw open" << std::endl;
-    
-    Pgo(-100, 1.5);
-    Pgo(50,4);
-    Brain.Screen.clearScreen();
-    while(true)
-    {
-      Brain.Screen.setFont(vex::mono40);
-      int i = 0;
-      int y = 0;
-      Brain.Screen.printAt(i, y, "Beans");
-      i++;
-      y++;
-      if (i > 100)
-      {
-        i = 0;
-      }
-      if (y > 100)
-      {
-        y = 0;
-      }
-      wait(0.1,sec);
-    }
+#include "main.h"
+#include "functions.hpp"
+#include "autofunct.hpp"
 /*
-    go(100);
-    Autoclaw('o');
-    wait(0.65, sec);
-    Autoclaw('s');
-    wait(0.85,sec);
-    halt();
-*/
-  //  Pstrafe(blue * 100, 1.5);
-/*
-    Pgo(-70,2);
-    Pgo(20,1);
-
-    Pstrafe(blue * 50,1); // Hopefully re-aligns the robot.
-
-    DLcontrol(50);
-    wait(1.7, sec);
-    DLcontrol(0);
-
-    DLcontrol(-10);
-    wait(0.2, sec);
-    DLcontrol(0);
-    Pgo(50,0.75);
-    std::cout << "Going for cube" << std::endl;
-    Pgo(10, 2);
-    Autoclaw('c');
-    std::cout << "Cube Grabbed, lifting" << std::endl;
-    wait(1, sec);
-    DLcontrol(-50);
-    wait(1.7, sec);
-    DLcontrol(0);
-    Pgo(-70, 1);
-    Pgo(20, 1);
-
-    Pstrafe(blue * -50, 3.3);
-
-    Pgo(30, 2);
-    Pgo(-20,2);
-    Autoclaw('o');
-    */
-  }
-  if (false) //STRAFE
-  {
-    Pgo(50,0.5);
-    Autoclaw('c');
-    wait(0.3, sec);
-    Autoclaw('s');
-    DLcontrol(-30);
-    wait(1.0, sec);
-    DLcontrol(0);
-
-    Pstrafe(blue * -100, 2);
-    Pstrafe(blue * 50, 5);
-  }
+ * A callback function for LLEMU's center button.
+ *
+ * When this callback is fired, it will toggle line 2 of the LCD text between
+ * "I was pressed!" and nothing.
+ */
+void on_center_button() {
+	static bool pressed = false;
+	pressed = !pressed;
+	if (pressed) {
+		pros::lcd::set_text(2, "I was pressed!");
+	} else {
+		pros::lcd::clear_line(2);
+	}
 }
 
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*                              User Control Task                            */
-/*                                                                           */
-/*  This task is used to control your robot during the user control phase of */
-/*  a VEX Competition.                                                       */
-/*                                                                           */
-/*  You must modify the code to add your own robot specific commands here.   */
-/*---------------------------------------------------------------------------*/
+/**
+ * Runs initialization code. This occurs as soon as the program is started.
+ *
+ * All other competition modes are blocked by initialize; it is recommended
+ * to keep execution time for this mode under a few seconds.
+ */
+void initialize() {
+	motorset();
+	pros::lcd::initialize();
+	pros::lcd::set_text(1, "Hello PROS User!");
+	pros::Task::delay(500);
 
-void usercontrol(void) {
-  motorset(); //this is incase pre auton doenst work or we're driving it for practice.
-
-  // User control code here, inside the loop
-  while (1) {
-
-    Gcode(); //Displays cool things on screen.
-    Ncheck(); //Checks if northturn buttons are pressed
-    DriveTrain(true); //Runs drivetrain, bool was for a depreciated function.
-    Lcontrol(); //Controls the lift
-    ClawControl(); //controls the claw.
-
-    wait(20, msec); // Sleep the task for a short amount of time to
-                    // prevent wasted resources.
-  }
+	pros::lcd::register_btn1_cb(on_center_button);
 }
 
-//
-// Main will set up the competition functions and callbacks.
-//
-int main() {
+/**
+ * Runs while the robot is in the disabled state of Field Management System or
+ * the VEX Competition Switch, following either autonomous or opcontrol. When
+ * the robot is enabled, this task will exit.
+ */
+void disabled() {
+	motorset();
+	pros::lcd::initialize();
+	pros::lcd::set_text(2, "Get B E A N E D!");
+	pros::Task::delay(100);
+	pros::lcd::set_text(4, "Get B E A N E D!");
+	pros::Task::delay(100);
+	pros::lcd::set_text(6, "Get B E A N E D!");
+	pros::Task::delay(100);
+}
+//Pre auton
+/**
+ * Runs after initialize(), and before autonomous when connected to the Field
+ * Management System or the VEX Competition Switch. This is intended for
+ * competition-specific initialization routines, such as an autonomous selector
+ * on the LCD.
+ *
+ * This task will exit when the robot is enabled and autonomous or opcontrol
+ * starts.
+ */
+void competition_initialize()
+{
+motorset();
+}
 
-  // Set up callbacks for autonomous and driver control periods.
-  Competition.autonomous(autonomous);
-  Competition.drivercontrol(usercontrol);
+/**
+ * Runs the user autonomous code. This function will be started in its own task
+ * with the default priority and stack size whenever the robot is enabled via
+ * the Field Management System or the VEX Competition Switch in the autonomous
+ * mode. Alternatively, this function may be called in initialize or opcontrol
+ * for non-competition testing purposes.
+ *
+ * If the robot is disabled or communications is lost, the autonomous task
+ * will be stopped. Re-enabling the robot will restart the task, not re-start it
+ * from where it left off.
+ */
+void autonomous()
+{
+	motorset();
+	go(50,0.5);
+	go(-50,0.25);
+	Autoclaw('o');
+	pros::Task::delay(500);
+	DLcontrol(50);
+	pros::Task::delay(500);
+	Autoclaw('c');
+	pros::Task::delay(1000);
+	DLcontrol(-50);
+	strafe(-50, 4);
+	DLcontrol(0);
+	strafe(-70,1);
+	Autoclaw('o');
+	pros::Task::delay(250);
+	Autoclaw('s');
 
-  // Run the pre-autonomous function.
-  pre_auton();
+}
 
-  // Prevent main from exiting with an infinite loop.
-  while (true) {
-    wait(100, msec);
-  }
+/**
+ * Runs the operator control code. This function will be started in its own task
+ * with the default priority and stack size whenever the robot is enabled via
+ * the Field Management System or the VEX Competition Switch in the operator
+ * control mode.
+ *
+ * If no competition control is connected, this function will run immediately
+ * following initialize().
+ *
+ * If the robot is disabled or communications is lost, the
+ * operator control task will be stopped. Re-enabling the robot will restart the
+ * task, not resume it from where it left off.
+ */
+void opcontrol() {
+	controller.rumble("..");
+	motorset();
+	int param = 5;
+  Task DriveTrain(DriveTrainCallback, &param, "");
+
+	while (true)
+	{
+		Ncheck();
+		Lcontrol();
+		ClawControl();
+		pros::delay(20);
+	}
 }
