@@ -25,6 +25,7 @@ void on_center_button() {
  */
 void initialize() {
 	motorset();
+	//OKAPIinit();
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello PROS User!");
 	pros::Task::delay(500);
@@ -75,23 +76,23 @@ motorset();
  */
 void autonomous()
 {
-	motorset();
-	go(50,0.5);
-	go(-50,0.25);
-	Autoclaw('o');
-	pros::Task::delay(500);
-	DLcontrol(50);
-	pros::Task::delay(500);
-	Autoclaw('c');
-	pros::Task::delay(1000);
-	DLcontrol(-50);
-	strafe(-50, 4);
-	DLcontrol(0);
-	strafe(-70,1);
-	Autoclaw('o');
-	pros::Task::delay(250);
-	Autoclaw('s');
+	auto chassis = ChassisControllerBuilder()
+	.withMotors(
+	6,  // Top left
+	8, // Top right (reversed)
+	9, // Bottom right (reversed)
+	7   // Bottom left
+	)
+	// Green gearset, 4 in wheel diam, 11.5 in wheel track
+	.withDimensions(AbstractMotor::gearset::green, {{4_in, 11.5_in}, imev5GreenTPR})
+	.build();
 
+	// Move 1 meter to the first goal
+chassis->moveDistance(1_m);
+// Turn 90 degrees to face second goal
+chassis->turnAngle(90_deg);
+// Drive 1 and a half feet toward second goal
+chassis->moveDistance(1.5_ft);
 }
 
 /**

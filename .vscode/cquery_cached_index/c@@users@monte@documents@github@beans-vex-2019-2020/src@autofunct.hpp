@@ -4,20 +4,17 @@
 extern double dist[2];
 void OKAPIinit()
 {
-  //Creats drivetrain for OKAPI for auton
-  //Defining what port motors are in
-  const int FLM = 6;
-  const int BLM = 7;
-  const int FRM = 8;
-  const int BRM = 9;
-  //Gives wheel diameter and chassis width for auto
-  const auto Wheel_Diameter = 3.25_in;
-  const auto Chassis_width = 17_in;
-
-  auto chassis = okapi::ChassisControllerFactory::create(FLM,FRM,BLM,BRM,
-    okapi::AbstractMotor::gearset::green,{Wheel_Diameter,Chassis_width});
+auto chassis = ChassisControllerBuilder()
+.withMotors(
+6,  // Top left
+8, // Top right (reversed)
+9, // Bottom right (reversed)
+7   // Bottom left
+)
+// Green gearset, 4 in wheel diam, 11.5 in wheel track
+.withDimensions(AbstractMotor::gearset::green, {{4_in, 11.5_in}, imev5GreenTPR})
+.build();
 }
-
 void motorset()
 {
   //Motors

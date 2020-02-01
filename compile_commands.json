@@ -59,6 +59,7 @@
             "-g",
             "-D_POSIX_THREADS",
             "-D_UNIX98_THREAD_MUTEX_ATTRIBUTES",
+            "-Wno-psabi",
             "-ffunction-sections",
             "-fdata-sections",
             "-fdiagnostics-color",
