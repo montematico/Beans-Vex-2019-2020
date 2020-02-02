@@ -1,133 +1,175 @@
 #include "main.h"
 
-
-double dist[2]; //Making distane variable global so all code can pull from it.
-
 // Functions makes the code readable.
+//CLASSES MAKE IT COOLER
 // Making Drive Train Variables Global
 
-// More Variables for gnocchi code
-int Goff = 0; // Gyroscope offset, set to zero because its non functional
-void DriveTrainCallback(void* param)
+class Claw
 {
-  //void* param
-  while(true)
+private:
+  float speed = 60; //sets speed of claw
+public:
+    char status; //can be read by other functions to see if motor is opening stopped or closed.
+    void open()
+    {
+      status = 'o';
+      Clawmotor.move(-speed);
+    }
+    void close()
+    {
+      status = 'c';
+      Clawmotor.move(speed);
+    }
+    void stop()
+    {
+      status = 's';
+      Clawmotor.move(0);
+    }
+    void usrctrl()
+    {
+      if(controller.get_digital(E_CONTROLLER_DIGITAL_L1))
+      {
+         Clawmotor.move(speed);
+      } else if(controller.get_digital(E_CONTROLLER_DIGITAL_L2))
+      {
+        Clawmotor.move(-speed);
+      } else
+      {
+        Clawmotor.move(0);
+      }
+    }
+  };
+
+class Drive
+{
+public:
+  void stop()
+  {
+    FL.move(0);
+    BL.move(0);
+    BR.move(0);
+    FR.move(0);
+  }
+  void gofw(float pw, float ti)
+  {
+    pw *= 1.27;
+    FL.move(-pw);
+    BL.move(pw);
+    BR.move(-pw);
+    FR.move(pw);
+    pros::Task::delay(ti*1000);
+    this->stop();
+  }
+  void gosw(float pw, float ti)
+  {
+    pw *= 1.27;
+    FL.move(pw);
+    BL.move(pw);
+    FR.move(pw);
+    BR.move(pw);
+    pros::Task::delay(ti*1000);
+    this->stop();
+  }
+  void usrctrl()
   {
     double FLI = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y) + controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
     double BLI = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y) - controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
     double FRI = (-1 * controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) + controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
     double BRI = (-1 * controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) - controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
 
-    FL.move(-FLI);
+    FL.move(FLI);
     BL.move(BLI);
-    FR.move(-FRI);
+    FR.move(FRI);
     BR.move(BRI);
-    delay(2);
+    pros::delay(2);
   }
-}
-void DriveTrain() // Contains code for driving motors
+};
+
+class Util
 {
-   double FLI = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y) + controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
-   double BLI = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y) - controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
-   double FRI = (-1 * controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) + controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
-   double BRI = (-1 * controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) - controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
-
-   FL.move(FLI);
-   BL.move(BLI);
-   FR.move(FRI);
-   BR.move(BRI);
-   pros::delay(2);
-}
-
-void NorthTurn(int dir)
-{
-  int pwr = 50; //turn rate 0-100 %
-
-  while ( fabs(dir - Gyro.get_value()) >= 3)
+public:
+  bool precise = false;
+  float prate;
+    void startup() //Performs all neccecary startup procedures like setting brake modes and resetting encoders
   {
-
-    FL.move(pwr);
-    FR.move(pwr);
-    BL.move(pwr);
-    BR.move(pwr);
+    //Sets motor brake mode
+    Clawmotor.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+    Llift.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+    Rlift.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+    BL.set_brake_mode(E_MOTOR_BRAKE_COAST);
+    BR.set_brake_mode(E_MOTOR_BRAKE_COAST);
+    FL.set_brake_mode(E_MOTOR_BRAKE_COAST);
+    FR.set_brake_mode(E_MOTOR_BRAKE_COAST);
+    //Resets all sensors to 0
+    Xencode.reset();
+    Yencode.reset();
   }
-  FL.move(0);
-  FR.move(0);
-  BL.move(0);
-  BR.move(0);
-}
-
-void Ncheck()
-{
-  if(controller.get_digital(E_CONTROLLER_DIGITAL_UP)) {
-    NorthTurn(0);}
-  else if(controller.get_digital(E_CONTROLLER_DIGITAL_RIGHT)){
-    NorthTurn(270);}
-  else if(controller.get_digital(E_CONTROLLER_DIGITAL_LEFT)){
-    NorthTurn(90);}
-  else if(controller.get_digital(E_CONTROLLER_DIGITAL_DOWN)){
-    NorthTurn(180);}
-  else if(controller.get_digital(E_CONTROLLER_DIGITAL_Y))
+  void pchecker() //Sets the robot into precise mode where everying runs at half speed
+  {
+    if(controller.get_digital(E_CONTROLLER_DIGITAL_DOWN))
     {
-      Gyro.reset(); //Sets new "north" if Y button is pressed
+      prate = 0.5;
+    } else if (controller.get_digital(E_CONTROLLER_DIGITAL_UP))
+    {
+      prate = 1;
     }
-}
-
-void DLcontrol(double pwr) {
-  // Synchronizes motors for lift
-  // uses pwr as a -100-100 integer for controlling both lift motors
-  //Also used in autonamous code to raise and lower lift.
-  if (pwr != 0) {
-    Llift.move(pwr);
-    Rlift.move(pwr);
-  } else {
+  }
+  void abort() //Function that kills all motors if shit really hits the fan
+  {
+    BL.move(0);
+    BR.move(0);
+    FL.move(0);
+    FR.move(0);
     Llift.move(0);
     Rlift.move(0);
-  }
-}
-
-void Lcontrol() {
-  double pw = 100.00; // How much power the motors should provide RPM
-  // controls the button input for lift
-  if (controller.get_digital(E_CONTROLLER_DIGITAL_R2))
-   {
-    DLcontrol(pw);
-  } else if (controller.get_digital(E_CONTROLLER_DIGITAL_R1)) {
-    DLcontrol(-1 * pw);
-  } else
-  {
-    // Stops the lift if no button is being held
-    DLcontrol(0);
-  }
-}
-
-void MotorStop()
-{
-  FL.move(0);
-  BL.move(0);
-  BR.move(0);
-  FR.move(0);
-  Rlift.move(0);
-  Llift.move(0);
-  Clawmotor.move(0);
-}
-
-void ClawControl()
-{
-  int speed = 60; //sets speed of motors.
-
-  if(controller.get_digital(E_CONTROLLER_DIGITAL_L1))
-  {
-     Clawmotor.move(speed);
-  } else if(controller.get_digital(E_CONTROLLER_DIGITAL_L2))
-  {
-    Clawmotor.move(-speed);
-  } else
-  {
     Clawmotor.move(0);
   }
-}
+  void OKAPIinit()
+  {
+    //Initiales the okapi library to allow for better auton control.
+    auto chassis = ChassisControllerBuilder()
+    .withMotors(
+    6,  // Top left
+    8, // Top right (reversed)
+    9, // Bottom right (reversed)
+    7   // Bottom left
+    )
+    // Green gearset, 4 in wheel diam, 11.5 in wheel track
+    .withDimensions(AbstractMotor::gearset::green, {{4_in, 11.5_in}, imev5GreenTPR})
+    .build();
+  }
+};
 
+class Lift
+{
+private:
+  float speed = 127; //Speed that the lift should run at when controlled (-127-127)
+public:
+  void move(double pwr)
+  {
+    //The manual lift control code.
+    Llift.move(pwr);
+    Rlift.move(pwr);
+  }
+  void usrctrl()
+  {
+    if(controller.get_digital(E_CONTROLLER_DIGITAL_R2))
+    {
+      Llift.move(speed);
+      Rlift.move(speed);
+    } else if (controller.get_digital(E_CONTROLLER_DIGITAL_R1))
+    {
+      Llift.move(-speed);
+      Rlift.move(-speed);
+    } else
+    {
+      //stops the motors if no button is being pressed
+      Llift.move(0);
+      Rlift.move(0);
+  }
+};
+
+//TODO either add the encoders back or nuke this function.
 void encoderreturn()
 {
   //Returns an array with x,y distance travelled in inches.
