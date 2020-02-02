@@ -1,6 +1,5 @@
 #include "main.h"
 #include "functions.hpp"
-#include "autofunct.hpp"
 /*
  * A callback function for LLEMU's center button.
  *
@@ -24,7 +23,11 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	motorset();
+	Drive drive;
+	Util util;
+	Lift lift;
+	Claw claw;
+	util.motorset();
 	//OKAPIinit();
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello PROS User!");
@@ -39,7 +42,7 @@ void initialize() {
  * the robot is enabled, this task will exit.
  */
 void disabled() {
-	motorset();
+	util.motorset();
 	pros::lcd::initialize();
 	pros::lcd::set_text(2, "Get B E A N E D!");
 	pros::Task::delay(100);
@@ -60,7 +63,8 @@ void disabled() {
  */
 void competition_initialize()
 {
-motorset();
+	pros::lcd::clear();
+	pros::lcd::set_text("Ready!")
 }
 
 /**
@@ -78,9 +82,9 @@ void autonomous()
 {
 	auto chassis = ChassisControllerBuilder()
 	.withMotors(
-	6,  // Top left
-	8, // Top right (reversed)
-	9, // Bottom right (reversed)
+	-6,  // Top left
+	-8, // Top right
+	9, // Bottom right
 	7   // Bottom left
 	)
 	// Green gearset, 4 in wheel diam, 11.5 in wheel track
@@ -109,16 +113,20 @@ chassis->moveDistance(1.5_ft);
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	Claw claw;
+	Lift lift;
+	Drive drive;
+	Util util;
+
 	controller.rumble("..");
-	motorset();
-	int param = 5;
-  Task DriveTrain(DriveTrainCallback, &param, "");
+	util.motorset();
+
 
 	while (true)
 	{
-		Ncheck();
-		Lcontrol();
-		ClawControl();
-		pros::delay(20);
+		lift.usrctrl();
+		claw.usrctrl();
+		drive.usrctrl();
+		pros::Task::delay(10);
 	}
 }
