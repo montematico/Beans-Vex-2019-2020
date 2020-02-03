@@ -1,20 +1,5 @@
 #include "main.h"
 #include "functions.hpp"
-/*
- * A callback function for LLEMU's center button.
- *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
- */
-void on_center_button() {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
-	} else {
-		pros::lcd::clear_line(2);
-	}
-}
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -23,17 +8,14 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	Drive drive;
-	Util util;
-	Lift lift;
-	Claw claw;
-	util.motorset();
+	Drivecode drive;
+	Utilcode util;
+	Liftcode lift;
+	Clawcode claw;
+	util.startup();
 	//OKAPIinit();
 	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
 	pros::Task::delay(500);
-
-	pros::lcd::register_btn1_cb(on_center_button);
 }
 
 /**
@@ -42,7 +24,6 @@ void initialize() {
  * the robot is enabled, this task will exit.
  */
 void disabled() {
-	util.motorset();
 	pros::lcd::initialize();
 	pros::lcd::set_text(2, "Get B E A N E D!");
 	pros::Task::delay(100);
@@ -64,7 +45,7 @@ void disabled() {
 void competition_initialize()
 {
 	pros::lcd::clear();
-	pros::lcd::set_text("Ready!")
+	pros::lcd::set_text(5,"Ready!");
 }
 
 /**
@@ -82,21 +63,21 @@ void autonomous()
 {
 	auto chassis = ChassisControllerBuilder()
 	.withMotors(
-	-6,  // Top left
-	-8, // Top right
-	9, // Bottom right
+	6,  // Top left
+	-9, // Top right
+	-8, // Bottom right
 	7   // Bottom left
 	)
 	// Green gearset, 4 in wheel diam, 11.5 in wheel track
 	.withDimensions(AbstractMotor::gearset::green, {{4_in, 11.5_in}, imev5GreenTPR})
-	.build();
+	.withMaxVelocity(100)
+	.withOdometry()
+	.buildOdometry();
 
 	// Move 1 meter to the first goal
-chassis->moveDistance(1_m);
-// Turn 90 degrees to face second goal
-chassis->turnAngle(90_deg);
-// Drive 1 and a half feet toward second goal
-chassis->moveDistance(1.5_ft);
+//chassis->moveDistance(1_ft);
+chassis->turnAngle(360_deg);
+chassis->stop();
 }
 
 /**
@@ -113,13 +94,13 @@ chassis->moveDistance(1.5_ft);
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	Claw claw;
-	Lift lift;
-	Drive drive;
-	Util util;
+	Clawcode claw;
+	Liftcode lift;
+	Drivecode drive;
+	Utilcode util;
 
 	controller.rumble("..");
-	util.motorset();
+	util.startup();
 
 
 	while (true)

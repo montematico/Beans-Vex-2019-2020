@@ -4,7 +4,7 @@
 //CLASSES MAKE IT COOLER
 // Making Drive Train Variables Global
 
-class Claw
+class Clawcode
 {
 private:
   float speed = 60; //sets speed of claw
@@ -40,7 +40,7 @@ public:
     }
   };
 
-class Drive
+class Drivecode
 {
 public:
   void stop()
@@ -76,7 +76,7 @@ public:
     double BLI = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y) - controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
     double FRI = (-1 * controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) + controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
     double BRI = (-1 * controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) - controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
-
+    
     FL.move(FLI);
     BL.move(BLI);
     FR.move(FRI);
@@ -85,7 +85,7 @@ public:
   }
 };
 
-class Util
+class Utilcode
 {
 public:
   bool precise = false;
@@ -140,7 +140,7 @@ public:
   }
 };
 
-class Lift
+class Liftcode
 {
 private:
   float speed = 127; //Speed that the lift should run at when controlled (-127-127)
@@ -166,9 +166,10 @@ public:
       //stops the motors if no button is being pressed
       Llift.move(0);
       Rlift.move(0);
+    }
   }
 };
-
+/*
 //TODO either add the encoders back or nuke this function.
 void encoderreturn()
 {
@@ -186,6 +187,7 @@ void encoderreturn()
   std::cout << "Y:" << std::endl;
   std::cout << dist[1] << std::endl;
 }
+
 double Xreturn()
 {
   //Returns an array with x,y distance travelled in inches.
@@ -209,3 +211,4 @@ double Yreturn()
   // ArcLength = θ * r.  θ in radii.
   return Ydist;
 }
+*/
