@@ -1,5 +1,5 @@
 #include "main.h"
-
+float prate = 1.00;
 // Functions makes the code readable.
 //CLASSES MAKE IT COOLER
 // Making Drive Train Variables Global
@@ -29,10 +29,10 @@ public:
     {
       if(controller.get_digital(E_CONTROLLER_DIGITAL_L1))
       {
-         Clawmotor.move(speed);
+         Clawmotor.move(speed * prate);
       } else if(controller.get_digital(E_CONTROLLER_DIGITAL_L2))
       {
-        Clawmotor.move(-speed);
+        Clawmotor.move(-speed * prate);
       } else
       {
         Clawmotor.move(0);
@@ -76,11 +76,10 @@ public:
     double BLI = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y) - controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
     double FRI = (-1 * controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) + controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
     double BRI = (-1 * controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) - controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) + controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_X);
-    
-    FL.move(FLI);
-    BL.move(BLI);
-    FR.move(FRI);
-    BR.move(BRI);
+    FL.move(FLI * prate);
+    BL.move(BLI * prate);
+    FR.move(FRI * prate);
+    BR.move(BRI * prate);
     pros::delay(2);
   }
 };
@@ -89,7 +88,6 @@ class Utilcode
 {
 public:
   bool precise = false;
-  float prate;
     void startup() //Performs all neccecary startup procedures like setting brake modes and resetting encoders
   {
     //Sets motor brake mode
@@ -104,14 +102,14 @@ public:
     Xencode.reset();
     Yencode.reset();
   }
-  void pchecker() //Sets the robot into precise mode where everying runs at half speed
+  void usrctrl() //Sets the robot into precise mode where everying runs at half speed
   {
     if(controller.get_digital(E_CONTROLLER_DIGITAL_DOWN))
     {
-      prate = 0.5;
+      prate = 0.50;
     } else if (controller.get_digital(E_CONTROLLER_DIGITAL_UP))
     {
-      prate = 1;
+      prate = 1.00;
     }
   }
   void abort() //Function that kills all motors if shit really hits the fan
@@ -140,27 +138,27 @@ public:
   }
 };
 
-class Liftcode
+class Liftcode //Code concerning the lift
 {
 private:
   float speed = 127; //Speed that the lift should run at when controlled (-127-127)
 public:
   void move(double pwr)
   {
-    //The manual lift control code.
+    //The manual lift control code. for auton
     Llift.move(pwr);
     Rlift.move(pwr);
   }
-  void usrctrl()
+  void usrctrl() //controls lift with controller
   {
     if(controller.get_digital(E_CONTROLLER_DIGITAL_R2))
     {
-      Llift.move(speed);
-      Rlift.move(speed);
+      Llift.move(speed * prate);
+      Rlift.move(speed * prate);
     } else if (controller.get_digital(E_CONTROLLER_DIGITAL_R1))
     {
-      Llift.move(-speed);
-      Rlift.move(-speed);
+      Llift.move(-speed * prate);
+      Rlift.move(-speed * prate);
     } else
     {
       //stops the motors if no button is being pressed
@@ -169,46 +167,10 @@ public:
     }
   }
 };
-/*
-//TODO either add the encoders back or nuke this function.
-void encoderreturn()
-{
-  //Returns an array with x,y distance travelled in inches.
-  double Xdist = Xencode.get_value();
-  double Ydist = Yencode.get_value();
-  //Converts degrees to radiians.
-  Xdist = Xdist * (3.1415926535897932/180); //This uses more digits of pi than NASA lmao.
-  Ydist = Ydist * (3.1415926535897932/180); //Nasa only used 15, our Superior code uses 16. :)
-  Xdist *= 1.375; //Uses ark length formula to calculate distance travelled in inches
-  Ydist *= 1.375; // ArcLength = θ * r.  θ in radii.
-  double dist[2] = {Xdist, Ydist};
-  std::cout << "X:" << std::endl;
-  std::cout << dist[0] << std::endl;
-  std::cout << "Y:" << std::endl;
-  std::cout << dist[1] << std::endl;
-}
-
-double Xreturn()
-{
-  //Returns an array with x,y distance travelled in inches.
-  double Xdist = Xencode.get_value();
-  //Converts degrees to radiians.
-  Xdist = Xdist * (3.1415926535897932/180); //This uses more digits of pi than NASA lmao.
-  //Nasa only used 15, our Superior code uses 16. :)
-  Xdist *= 1.375; //Uses ark length formula to calculate distance travelled in inches
-  // ArcLength = θ * r.  θ in radii.
-  return Xdist;
-}
-
-double Yreturn()
-{
-  //Returns an array with x,y distance travelled in inches.
-  double Ydist = Yencode.get_value();
-  //Converts degrees to radiians.
-  Ydist = Ydist * (3.1415926535897932/180); //This uses more digits of pi than NASA lmao.
-  //Nasa only used 15, our Superior code uses 16. :)
-  Ydist *= 1.375; //Uses ark length formula to calculate distance travelled in inches
-  // ArcLength = θ * r.  θ in radii.
-  return Ydist;
-}
-*/
+//Wow, you read (or scrolled) through all the code, nice!
+//I self taught myself c++ and this code has iterated through many versions.
+//The first version was in VCS and had no functions.
+//The second version was all functions with 3 different header files and many redudant functions
+//The third and (hopefully) final version is this. everything is in classes and there is nearly no redundancy.
+//Although I kinda miss thie overly compelex auton functions I wrote for V.2;
+//Oh well, I know its not perfect but its mine ☺.

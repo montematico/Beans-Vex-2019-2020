@@ -1,5 +1,6 @@
 #include "main.h"
 #include "functions.hpp"
+extern float prate;
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -105,9 +106,11 @@ void opcontrol() {
 
 	while (true)
 	{
+		//Hands over control of all components to user.
 		lift.usrctrl();
 		claw.usrctrl();
 		drive.usrctrl();
+		util.usrctrl();
 		pros::Task::delay(10);
 	}
 }
