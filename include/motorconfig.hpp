@@ -16,7 +16,7 @@ pros::Motor Rlift (3,E_MOTOR_GEARSET_36,true);
 pros::Motor Llift (1,E_MOTOR_GEARSET_36,false);
 
 //Claw
-pros::Motor Clawmotor (5,E_MOTOR_GEARSET_36,false);
+pros::Motor Clawmotor (10,E_MOTOR_GEARSET_36,false);
 
 //3 wire
 
