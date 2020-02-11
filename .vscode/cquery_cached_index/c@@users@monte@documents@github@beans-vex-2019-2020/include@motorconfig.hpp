@@ -24,3 +24,6 @@ pros::ADIGyro Gyro (1,0.1);
 pros::ADIPotentiometer Pot (4);
 pros::ADIEncoder Xencode(5,6);
 pros::ADIEncoder Yencode(7,8);
+
+//Vision
+pros::Vision camera(5);

@@ -178,6 +178,21 @@ public:
     }
   }
 };
+
+class VisionCode
+{
+public:
+  void Sigset()
+  {
+    camera.clearled();
+  pros::vision_signature_s_t GREENsig = pros::Vision::signature_from_utiliy(GREENCUBE,-5761, -4079, -4920, -2497, -449, -1474, 2.600, 0);
+  camera.set_signature(GREENCUBE, &GREENsig);
+  pros::vision_signature_s_t ORANGEsig = pros::Vision::signature_from_utility(ORANGECUBE,6943, 8831, 7886, -2641, -1471, -2056, 1.400, 0);
+  camera.set_signature(ORANGECUBE, &ORANGEsig);
+  }
+
+private:
+};
 //Wow, you read (or scrolled) through all the code, nice!
 //I self taught myself c++ and this code has iterated through many versions.
 //The first version was in VCS and had no functions.
