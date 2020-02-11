@@ -136,6 +136,17 @@ public:
     .withDimensions(AbstractMotor::gearset::green, {{4_in, 11.5_in}, imev5GreenTPR})
     .build();
   }
+  void autonrecord()
+  {
+    clock_t  t;
+    t = clock();
+    printf("%lu\n", t);
+    printf("FR: %d\n", FR.get_voltage());
+    printf("FL: %d\n", FL.get_voltage());
+    printf("BR: %d\n", BR.get_voltage());
+    printf("BL: %d\n", BL.get_voltage());
+
+  }
 };
 
 class Liftcode //Code concerning the lift

@@ -62,6 +62,8 @@ void competition_initialize()
  */
 void autonomous()
 {
+	Liftcode lift;
+	Clawcode claw;
 	auto chassis = ChassisControllerBuilder()
 	.withMotors(
 	6,  // Top left
@@ -70,15 +72,19 @@ void autonomous()
 	7   // Bottom left
 	)
 	// Green gearset, 4 in wheel diam, 11.5 in wheel track
-	.withDimensions(AbstractMotor::gearset::green, {{4_in, 11.5_in}, imev5GreenTPR})
+	.withDimensions(AbstractMotor::gearset::green, {{4_in, 18_in}, imev5GreenTPR})
 	.withMaxVelocity(100)
 	.withOdometry()
 	.buildOdometry();
-
-	// Move 1 meter to the first goal
-//chassis->moveDistance(1_ft);
-chassis->turnAngle(360_deg);
-chassis->stop();
+claw.close();
+chassis->moveDistance(8_in);
+lift.move(-80);
+chassis->turnAngle(270_deg);
+lift.move(0);
+chassis->moveDistance(1_ft);
+claw.open();
+pros::Task::delay(500);
+claw.stop();
 }
 
 /**
