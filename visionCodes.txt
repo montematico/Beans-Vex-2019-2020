@@ -1,0 +1,8 @@
+vision::signature GREENCUBE (1, -5761, -4079, -4920, -2497, -449, -1474, 3.000, 0);
+vision::signature ORANGECUBE (2, 6943, 8831, 7886, -2641, -1471, -2056, 1.400, 0);
+vision::signature SIG_3 (3, 0, 0, 0, 0, 0, 0, 3.000, 0);
+vision::signature SIG_4 (4, 0, 0, 0, 0, 0, 0, 3.000, 0);
+vision::signature SIG_5 (5, 0, 0, 0, 0, 0, 0, 3.000, 0);
+vision::signature SIG_6 (6, 0, 0, 0, 0, 0, 0, 3.000, 0);
+vision::signature SIG_7 (7, 0, 0, 0, 0, 0, 0, 3.000, 0);
+vex::vision vision1 ( vex::PORT1, 50, GREENCUBE, ORANGECUBE, SIG_3, SIG_4, SIG_5, SIG_6, SIG_7 );

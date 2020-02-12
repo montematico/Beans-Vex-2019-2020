@@ -19,11 +19,8 @@ pros::Motor Llift (1,E_MOTOR_GEARSET_36,false);
 pros::Motor Clawmotor (10,E_MOTOR_GEARSET_36,false);
 
 //3 wire
-
-pros::ADIGyro Gyro (1,0.1);
-pros::ADIPotentiometer Pot (4);
-pros::ADIEncoder Xencode(5,6);
-pros::ADIEncoder Yencode(7,8);
+pros::ADIDigitalIn Ulimit (1);
+pros::ADIDigitalIn Dlimit (2);
 
 //Vision
-pros::Vision camera(5);
+pros::Vision vision_sensor (5,E_VISION_ZERO_CENTER);

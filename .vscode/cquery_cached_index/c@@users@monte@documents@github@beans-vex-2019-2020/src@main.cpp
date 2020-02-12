@@ -1,6 +1,5 @@
 #include "main.h"
 #include "functions.hpp"
-extern float prate;
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -9,11 +8,10 @@ extern float prate;
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	Drivecode drive;
 	Utilcode util;
-	Liftcode lift;
-	Clawcode claw;
+	VisionCode vision;
 	util.startup();
+	vision.startup();
 	//OKAPIinit();
 	pros::lcd::initialize();
 	pros::Task::delay(500);
@@ -64,6 +62,7 @@ void autonomous()
 {
 	Liftcode lift;
 	Clawcode claw;
+	Drivecode drive;
 	auto chassis = ChassisControllerBuilder()
 	.withMotors(
 	6,  // Top left
@@ -105,11 +104,10 @@ void opcontrol() {
 	Liftcode lift;
 	Drivecode drive;
 	Utilcode util;
+	VisionCode vision;
 
 	controller.rumble("..");
 	util.startup();
-
-
 	while (true)
 	{
 		//Hands over control of all components to user.

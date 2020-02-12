@@ -182,18 +182,36 @@ public:
 class VisionCode
 {
 public:
-  void Sigset()
+  void startup()
   {
-    camera.clearled();
-  pros::vision_signature_s_t GREENsig = pros::Vision::signature_from_utiliy(GREENCUBE,-5761, -4079, -4920, -2497, -449, -1474, 2.600, 0);
-  camera.set_signature(GREENCUBE, &GREENsig);
-  pros::vision_signature_s_t ORANGEsig = pros::Vision::signature_from_utility(ORANGECUBE,6943, 8831, 7886, -2641, -1471, -2056, 1.400, 0);
-  camera.set_signature(ORANGECUBE, &ORANGEsig);
+    //Disables Wifi just in case. ;)
+    vision_sensor.set_wifi_mode(0);
+
+    //Sets preset signatures
+     vision_sensor.clear_led();
+     vision_sensor.set_led(COLOR_RED);
+     vision_sensor.signature_from_utility(1, -5761, -4079, -4920, -2497, -449, -1474, 3.000, 0);; //Green Cube
+     vision_sensor.signature_from_utility(2, 6943, 8831, 7886, -2641, -1471, -2056, 1.400, 0); //Orange Cube
+     pros::Task::delay(500);
+     vision_sensor.clear_led();
+     printf("Color Signatures set\n");
+     vision_sensor.set_led(COLOR_GREEN);
+  }
+  void findcube()
+  {
+    /*
+    while(cube.x - 1/2 fov)
+    {
+      PID loop to cube
+    }
+    gofw
+    clawclose
+  }
+  */
   }
 
-private:
 };
-//Wow, you read (or scrolled) through all the code, nice!
+//Wow, you read (or skipped) through all the code, nice!
 //I self taught myself c++ and this code has iterated through many versions.
 //The first version was in VCS and had no functions.
 //The second version was all functions with 3 different header files and many redudant functions
