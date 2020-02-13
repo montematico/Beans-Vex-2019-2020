@@ -1,6 +1,9 @@
 # Compiled Object files
 *.o
 *.obj
+*.vscode
+*.json
+!log.json
 
 # Executables
 *.bin

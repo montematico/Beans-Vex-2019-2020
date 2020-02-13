@@ -98,9 +98,6 @@ public:
     BR.set_brake_mode(E_MOTOR_BRAKE_COAST);
     FL.set_brake_mode(E_MOTOR_BRAKE_COAST);
     FR.set_brake_mode(E_MOTOR_BRAKE_COAST);
-    //Resets all sensors to 0
-    Xencode.reset();
-    Yencode.reset();
   }
   void usrctrl() //Sets the robot into precise mode where everying runs at half speed
   {
@@ -189,7 +186,7 @@ public:
 
     //Sets preset signatures
      vision_sensor.clear_led();
-     vision_sensor.set_led(COLOR_RED);
+     vision_sensor.set_led(COLOR_YELLOW);
      vision_sensor.signature_from_utility(1, -5761, -4079, -4920, -2497, -449, -1474, 3.000, 0);; //Green Cube
      vision_sensor.signature_from_utility(2, 6943, 8831, 7886, -2641, -1471, -2056, 1.400, 0); //Orange Cube
      pros::Task::delay(500);
@@ -199,22 +196,56 @@ public:
   }
   void findcube()
   {
-    /*
-    while(cube.x - 1/2 fov)
+    Drivecode drive;
+    vision_object_s_t cube = vision_sensor.get_by_size(0);
+    int coord [2] = {cube.x_middle_coord, cube.y_middle_coord};
+
+    int clockwise;
+    if(cube.x_middle_coord < 0)
     {
-      PID loop to cube
+      clockwise = -1;
+    } else
+    {
+      clockwise = 1;
     }
-    gofw
-    clawclose
+
+    while(abs(5 - coord[0]) > 5)
+    {
+      vision_object_s_t cube = vision_sensor.get_by_size(0);
+      int coord [2] = {cube.x_middle_coord, cube.y_middle_coord};
+      printf("x:%d y:%d \n",cube.x_middle_coord, cube.y_middle_coord);
+
+      std::map<std::string,float> tuner = {{"KP", 0.1}, {"KI", 0.1}, {"DT", 1}};
+      double error = coord[0] - 0;
+      double area = error * tuner.at("DT"); //DT is the size of the 'slices' of area for the curve
+      double integral = integral + error;
+      double power = error * tuner.at("KP");// + integral * tuner.at("KI"); //Kp is the multiplier of the PID loop to prevent slowing down or agressive movemnt
+      FL.move(power*clockwise);
+      FR.move(power*clockwise);
+      BL.move(power*clockwise);
+      BR.move(power*clockwise);
+      pros::Task::delay(50);
+    }
+    drive.stop();
   }
-  */
+  void findtest()
+  {
+    while(true)
+    {
+      vision_object_s_t cube = vision_sensor.get_by_size(0);
+      int coord [2] = {cube.x_middle_coord, cube.y_middle_coord};
+      printf("x:%d y:%d \n",cube.x_middle_coord, cube.y_middle_coord);
+      pros::Task::delay(1000);
+    }
   }
 
 };
+
+
 //Wow, you read (or skipped) through all the code, nice!
 //I self taught myself c++ and this code has iterated through many versions.
 //The first version was in VCS and had no functions.
 //The second version was all functions with 3 different header files and many redudant functions
 //The third and (hopefully) final version is this. everything is in classes and there is nearly no redundancy.
-//Although I kinda miss thie overly compelex auton functions I wrote for V.2;
+//Although I kinda miss thie overly compelex auton functions I wrote for V.2.
 //Oh well, I know its not perfect but its mine ☺.
