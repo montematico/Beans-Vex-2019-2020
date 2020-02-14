@@ -82,6 +82,31 @@ public:
     BR.move(BRI * prate);
     pros::delay(2);
   }
+  void turnleft(float pw,float ti=-1)
+  {
+    //Simple functions allow to turn, optional time param for auton
+    FL.move(pw);
+    FR.move(pw);
+    BL.move(pw);
+    BR.move(pw);
+    if(ti != -1)
+    {
+      pros::Task::delay(ti*1000);
+      this->stop();
+    }
+  }
+  void turnright(float pw,float ti=-1)
+  {
+    FL.move(-pw);
+    FR.move(-pw);
+    BL.move(-pw);
+    BR.move(-pw);
+    if(ti != -1)
+    {
+      pros::Task::delay(ti*1000);
+      this->stop();
+    }
+  }
 };
 
 class Utilcode
@@ -220,10 +245,7 @@ public:
       double area = error * tuner.at("DT"); //DT is the size of the 'slices' of area for the curve
       double integral = integral + error;
       double power = error * tuner.at("KP");// + integral * tuner.at("KI"); //Kp is the multiplier of the PID loop to prevent slowing down or agressive movemnt
-      FL.move(power*clockwise);
-      FR.move(power*clockwise);
-      BL.move(power*clockwise);
-      BR.move(power*clockwise);
+      
       pros::Task::delay(50);
     }
     drive.stop();
