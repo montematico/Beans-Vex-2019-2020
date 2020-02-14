@@ -109,7 +109,7 @@ void opcontrol() {
 	controller.rumble("..");
 	util.startup();
 	vision.startup();
-	vision.findtest();
+	vision.findcube();
 	while (true)
 	{
 		//Hands over control of all components to user.

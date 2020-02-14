@@ -1,33 +1,5 @@
 # Compiled Object files
 *.o
 *.obj
-*.vscode
-*.json
-!log.json
-include/motorconfig.hpp
-include/display/README.md
 
-# Executables
-*.bin
-*.elf
-
-# PROS
-bin/
-.vscode/
-compile_commands.json
-temp.log
-temp.errors
-*.ini
-.d/
-*.pros
-makefile
-*.mk
-*.a
-*.ld
-include/api.h
-include/display/licence.txt
-*.h
-include/okapi/api.hpp
-include/okapi/api/chassis/controller/chassisController.hpp
-include/okapi/api/chassis/controller/chassisControllerIntegrated.hpp
-*.hpp
+.vscode*

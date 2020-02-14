@@ -23,4 +23,4 @@ pros::ADIDigitalIn Ulimit (1);
 pros::ADIDigitalIn Dlimit (2);
 
 //Vision
-pros::Vision vision_sensor (5,E_VISION_ZERO_CENTER);
+pros::Vision vision_sensor (5,E_VISION_ZERO_TOPLEFT);

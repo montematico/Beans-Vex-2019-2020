@@ -50,24 +50,24 @@ public:
     BR.move(0);
     FR.move(0);
   }
-  void gofw(float pw, float ti)
+  void gofw(float pw, float ti = -1)
   {
     pw *= 1.27;
     FL.move(-pw);
     BL.move(pw);
     BR.move(-pw);
     FR.move(pw);
-    pros::Task::delay(ti*1000);
+    if(ti != -1) pros::Task::delay(ti*1000);
     this->stop();
   }
-  void gosw(float pw, float ti)
+  void gosw(float pw, float ti = -1)
   {
     pw *= 1.27;
     FL.move(pw);
     BL.move(pw);
     FR.move(pw);
     BR.move(pw);
-    pros::Task::delay(ti*1000);
+    if(ti != -1) pros::Task::delay(ti*1000);
     this->stop();
   }
   void usrctrl()
@@ -203,6 +203,8 @@ public:
 
 class VisionCode
 {
+private:
+  std::map<std::string,float> tuner = {{"KP", 0.3}, {"KI", 0.1}, {"KD", 1}};
 public:
   void startup()
   {
@@ -224,36 +226,38 @@ public:
     Drivecode drive;
     vision_object_s_t cube = vision_sensor.get_by_size(0);
     int coord [2] = {cube.x_middle_coord, cube.y_middle_coord};
-
-    int clockwise;
-    if(cube.x_middle_coord < 0)
+    printf("x:%d y:%d \n",cube.x_middle_coord, cube.y_middle_coord);
+    float power = 316/2 - coord[0];
+    while(true)
     {
-      clockwise = -1;
-    } else
-    {
-      clockwise = 1;
-    }
+      cube = vision_sensor.get_by_size(0);
+      coord [0] = cube.x_middle_coord;
+      coord [1] = cube.y_middle_coord;
+      printf("x:%d y:%d \n",coord[0], coord[1]);
 
-    while(abs(5 - coord[0]) > 5)
-    {
-      vision_object_s_t cube = vision_sensor.get_by_size(0);
-      int coord [2] = {cube.x_middle_coord, cube.y_middle_coord};
-      printf("x:%d y:%d \n",cube.x_middle_coord, cube.y_middle_coord);
-
-      std::map<std::string,float> tuner = {{"KP", 0.1}, {"KI", 0.1}, {"DT", 1}};
-      double error = coord[0] - 0;
-      double area = error * tuner.at("DT"); //DT is the size of the 'slices' of area for the curve
-      double integral = integral + error;
-      double power = error * tuner.at("KP");// + integral * tuner.at("KI"); //Kp is the multiplier of the PID loop to prevent slowing down or agressive movemnt
-      
-      pros::Task::delay(50);
+      float error = 158 - coord[0];
+      float integral = integral + error;
+      if (error <= 10) integral = 0;
+      if (fabs(error) >= 300 ) integral = 0;
+      float prevError = error;
+      float derivative = error - prevError;
+      power = error*tuner.at("KP") + integral*tuner.at("KI") + derivative*tuner.at("KD");
+      drive.turnright(power);
+      /*
+      if (error > 10) {drive.turnright(power);}
+      else if (error <= 10) {drive.gofw(25);}
+      else {drive.turnright(20);}
+      */
+      pros::Task::delay(15);
     }
     drive.stop();
   }
+
   void findtest()
   {
     while(true)
     {
+
       vision_object_s_t cube = vision_sensor.get_by_size(0);
       int coord [2] = {cube.x_middle_coord, cube.y_middle_coord};
       printf("x:%d y:%d \n",cube.x_middle_coord, cube.y_middle_coord);
