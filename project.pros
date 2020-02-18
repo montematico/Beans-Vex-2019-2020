@@ -4,6 +4,22 @@
         "project_name": "Beans-Vex-2019-2020",
         "target": "v5",
         "templates": {
+            "autoSelect": {
+                "location": "C:\\Users\\monte\\AppData\\Roaming\\PROS\\templates\\autoSelect@1.0.0",
+                "metadata": {
+                    "origin": "local"
+                },
+                "name": "autoSelect",
+                "py/object": "pros.conductor.templates.local_template.LocalTemplate",
+                "supported_kernels": "^3.2.1",
+                "system_files": [
+                    "include/selection.h",
+                    "firmware/autoSelect.a"
+                ],
+                "target": "v5",
+                "user_files": [],
+                "version": "1.0.0"
+            },
             "kernel": {
                 "location": "C:\\Users\\monte\\AppData\\Roaming\\PROS\\templates\\kernel@3.2.1",
                 "metadata": {

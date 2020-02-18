@@ -43,6 +43,22 @@ public:
 class Drivecode
 {
 public:
+  void againstwall()
+  {
+    while(fabs(Lsense.get_value() - Rsense.get_value()) >= 1 )
+    {
+      //Calculates all the values for the PID loop
+      std::map<std::string,float> tuner = {{"KP", 0.3}, {"KI", 0.1}, {"KD", 5}};
+      float error = fabs(Lsense.get_value() - Rsense.get_value());
+      float integral = integral + error;
+      if (error <= 10 && fabs(error) >= 300) integral = 0;
+      float prevError = error;
+      float derivative = error - prevError;
+      float power = error*tuner.at("KP") + integral*tuner.at("KI") + derivative*tuner.at("KD");
+      pros::Task::delay(15);
+    }
+    this->stop();
+  }
   void stop()
   {
     FL.move(0);
@@ -53,12 +69,15 @@ public:
   void gofw(float pw, float ti = -1)
   {
     pw *= 1.27;
-    FL.move(-pw);
+    FL.move(pw);
     BL.move(pw);
     BR.move(-pw);
-    FR.move(pw);
-    if(ti != -1) pros::Task::delay(ti*1000);
-    this->stop();
+    FR.move(-pw);
+    if(ti != -1)
+    {
+      pros::Task::delay(ti*1000);
+      this->stop();
+    }
   }
   void gosw(float pw, float ti = -1)
   {
@@ -67,8 +86,11 @@ public:
     BL.move(pw);
     FR.move(pw);
     BR.move(pw);
-    if(ti != -1) pros::Task::delay(ti*1000);
+    if(ti != -1)
+    {
+    pros::Task::delay(ti*1000);
     this->stop();
+    }
   }
   void usrctrl()
   {
@@ -204,7 +226,8 @@ public:
 class VisionCode
 {
 private:
-  std::map<std::string,float> tuner = {{"KP", 0.3}, {"KI", 0.1}, {"KD", 1}};
+  std::map<std::string,float> tuner = {{"KP", 0.3}, {"KI", 0.1}, {"KD", 5}}; //A bunch of tuner varables that are easier to keep here.
+  //This is the tuners used for all vision based turning PID loops.
 public:
   void startup()
   {
@@ -216,41 +239,45 @@ public:
      vision_sensor.set_led(COLOR_YELLOW);
      vision_sensor.signature_from_utility(1, -5761, -4079, -4920, -2497, -449, -1474, 3.000, 0);; //Green Cube
      vision_sensor.signature_from_utility(2, 6943, 8831, 7886, -2641, -1471, -2056, 1.400, 0); //Orange Cube
-     pros::Task::delay(500);
      vision_sensor.clear_led();
      printf("Color Signatures set\n");
      vision_sensor.set_led(COLOR_GREEN);
   }
   void findcube()
   {
+    auto chassis = ChassisControllerBuilder().withMotors(6,-9,-8,7).withDimensions(AbstractMotor::gearset::green, {{4_in, 18_in}, imev5GreenTPR}).withMaxVelocity(100).withOdometry().buildOdometry();
     Drivecode drive;
+    Clawcode claw;
     vision_object_s_t cube = vision_sensor.get_by_size(0);
     int coord [2] = {cube.x_middle_coord, cube.y_middle_coord};
     printf("x:%d y:%d \n",cube.x_middle_coord, cube.y_middle_coord);
-    float power = 316/2 - coord[0];
-    while(true)
+    float error = 6;
+
+    turnloop:
+    while(error >= 5)
     {
+      //Gets the nth largest object the camera sees and saves it to the coord array
       cube = vision_sensor.get_by_size(0);
       coord [0] = cube.x_middle_coord;
       coord [1] = cube.y_middle_coord;
       printf("x:%d y:%d \n",coord[0], coord[1]);
 
+      //Calculates all the values for the PID loop
       float error = 158 - coord[0];
       float integral = integral + error;
-      if (error <= 10) integral = 0;
-      if (fabs(error) >= 300 ) integral = 0;
+      if (error <= 10 && fabs(error) >= 300) integral = 0;
       float prevError = error;
       float derivative = error - prevError;
-      power = error*tuner.at("KP") + integral*tuner.at("KI") + derivative*tuner.at("KD");
-      drive.turnright(power);
-      /*
-      if (error > 10) {drive.turnright(power);}
-      else if (error <= 10) {drive.gofw(25);}
-      else {drive.turnright(20);}
-      */
+      float power = error*tuner.at("KP") + integral*tuner.at("KI") + derivative*tuner.at("KD");
       pros::Task::delay(15);
     }
+    claw.open();
+    pros::Task::delay(500);\
+    while(dist >= 5_in) drive.gofw(50);
     drive.stop();
+    claw.close();
+    againstwall();
+    chassis->turnAngle(90_deg);
   }
 
   void findtest()

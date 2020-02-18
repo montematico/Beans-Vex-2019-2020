@@ -1,5 +1,6 @@
 #include "main.h"
 #include "functions.hpp"
+#include "selection.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -13,7 +14,6 @@ void initialize() {
 	util.startup();
 	vision.startup();
 	//OKAPIinit();
-	pros::lcd::initialize();
 	pros::Task::delay(500);
 }
 
@@ -23,13 +23,6 @@ void initialize() {
  * the robot is enabled, this task will exit.
  */
 void disabled() {
-	pros::lcd::initialize();
-	pros::lcd::set_text(2, "Get B E A N E D!");
-	pros::Task::delay(100);
-	pros::lcd::set_text(4, "Get B E A N E D!");
-	pros::Task::delay(100);
-	pros::lcd::set_text(6, "Get B E A N E D!");
-	pros::Task::delay(100);
 }
 //Pre auton
 /**
@@ -43,8 +36,17 @@ void disabled() {
  */
 void competition_initialize()
 {
-	pros::lcd::clear();
-	pros::lcd::set_text(5,"Ready!");
+	/*
+    autonSelection == 1 :Blue Front
+    autonSelection == 2 : Blue Back
+    autonSelection == 3 : Do Nothing
+    autonSelection == -1 : Red Front
+    autonSelection == -2 : Red Back
+    autonSelection == -3 : Do Nothing
+    autonSelection == 0 : Skills
+*/
+	selectorInit();
+
 }
 
 /**
@@ -109,7 +111,7 @@ void opcontrol() {
 	controller.rumble("..");
 	util.startup();
 	vision.startup();
-	vision.findcube();
+	//vision.findcube();
 	while (true)
 	{
 		//Hands over control of all components to user.

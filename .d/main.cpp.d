@@ -180,7 +180,8 @@ bin/main.cpp.o: src/main.cpp include/main.h include/api.h \
  include/okapi/api/units/QPressure.hpp \
  include/okapi/api/units/QTorque.hpp include/okapi/api/units/QVolume.hpp \
  include/okapi/impl/util/rate.hpp include/pros/api_legacy.h \
- include/motorconfig.hpp include/main.h src/functions.hpp
+ include/motorconfig.hpp include/main.h src/functions.hpp \
+ include/selection.h
 
 include/main.h:
 
@@ -695,3 +696,5 @@ include/motorconfig.hpp:
 include/main.h:
 
 src/functions.hpp:
+
+include/selection.h:
