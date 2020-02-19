@@ -23,6 +23,7 @@ pros::ADIDigitalIn Ulimit (1);
 pros::ADIDigitalIn Dlimit (2);
 pros::ADIUltrasonic Rsense(3,4);
 pros::ADIUltrasonic Lsense(5,6);
+pros::ADIUltrasonic Cubesense(7,8);
 
 //Vision
 pros::Vision vision_sensor (5,E_VISION_ZERO_TOPLEFT);

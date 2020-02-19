@@ -7,7 +7,7 @@ float prate = 1.00;
 class Clawcode
 {
 private:
-  float speed = 60; //sets speed of claw
+  const float speed = 60; //sets speed of claw
 public:
     char status; //can be read by other functions to see if motor is opening stopped or closed.
     void open()
@@ -134,7 +134,6 @@ public:
 class Utilcode
 {
 public:
-  bool precise = false;
     void startup() //Performs all neccecary startup procedures like setting brake modes and resetting encoders
   {
     //Sets motor brake mode
@@ -145,6 +144,10 @@ public:
     BR.set_brake_mode(E_MOTOR_BRAKE_COAST);
     FL.set_brake_mode(E_MOTOR_BRAKE_COAST);
     FR.set_brake_mode(E_MOTOR_BRAKE_COAST);
+  }
+  float get_value() //Returns ultrasonic sensor value in inches since in lazy as hell
+  {
+    return Cubesense.get_value() * 2.54;
   }
   void usrctrl() //Sets the robot into precise mode where everying runs at half speed
   {
@@ -196,7 +199,7 @@ public:
 class Liftcode //Code concerning the lift
 {
 private:
-  float speed = 127; //Speed that the lift should run at when controlled (-127-127)
+  const float speed = 127; //Speed that the lift should run at when controlled (-127-127)
 public:
   void move(double pwr)
   {
@@ -223,11 +226,19 @@ public:
   }
 };
 
+
+
 class VisionCode
 {
 private:
   std::map<std::string,float> tuner = {{"KP", 0.3}, {"KI", 0.1}, {"KD", 5}}; //A bunch of tuner varables that are easier to keep here.
   //This is the tuners used for all vision based turning PID loops.
+  Drivecode drive;
+  Clawcode claw;
+  Utilcode util;
+  vision_object_s_t cube = vision_sensor.get_by_size(0);
+  static int coord [2];
+  float error = 158 - coord[0];
 public:
   void startup()
   {
@@ -243,18 +254,18 @@ public:
      printf("Color Signatures set\n");
      vision_sensor.set_led(COLOR_GREEN);
   }
-  void findcube()
+
+  //Turns to find a cube until error is below and allowed limit
+  void turncube()
   {
     auto chassis = ChassisControllerBuilder().withMotors(6,-9,-8,7).withDimensions(AbstractMotor::gearset::green, {{4_in, 18_in}, imev5GreenTPR}).withMaxVelocity(100).withOdometry().buildOdometry();
-    Drivecode drive;
-    Clawcode claw;
-    vision_object_s_t cube = vision_sensor.get_by_size(0);
-    int coord [2] = {cube.x_middle_coord, cube.y_middle_coord};
+    cube = vision_sensor.get_by_size(0);
+    coord [0] = cube.x_middle_coord;
+    coord [1] = cube.y_middle_coord;
     printf("x:%d y:%d \n",cube.x_middle_coord, cube.y_middle_coord);
-    float error = 6;
+    float error = 6; //Initialized with 6 b/c otherwise the loop wont begin.
 
-    turnloop:
-    while(error >= 5)
+    while(error >= 5) //Change second value to make more or less precice before exiting loop
     {
       //Gets the nth largest object the camera sees and saves it to the coord array
       cube = vision_sensor.get_by_size(0);
@@ -263,21 +274,30 @@ public:
       printf("x:%d y:%d \n",coord[0], coord[1]);
 
       //Calculates all the values for the PID loop
-      float error = 158 - coord[0];
+      error = 158 - coord[0];
       float integral = integral + error;
       if (error <= 10 && fabs(error) >= 300) integral = 0;
       float prevError = error;
       float derivative = error - prevError;
       float power = error*tuner.at("KP") + integral*tuner.at("KI") + derivative*tuner.at("KD");
+      drive.turnright(power); //Applies power to motor.
       pros::Task::delay(15);
     }
+  }
+  void gocube() //Should measure distance to cube and go pick it up.
+  {
+    //MAKE THIS A PID LOOP IF YOU WANT or dont, I dont care as long as it works.
     claw.open();
-    pros::Task::delay(500);\
-    while(dist >= 5_in) drive.gofw(50);
+    pros::Task::delay(500);
+    claw.stop();
+    while(util.get_value() >= 5)
+    {
+      drive.gofw(50);
+      error = 158 - coord[0];
+      if (error >= 10) this->turncube();
+    }
     drive.stop();
     claw.close();
-    againstwall();
-    chassis->turnAngle(90_deg);
   }
 
   void findtest()
