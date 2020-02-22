@@ -238,7 +238,7 @@ private:
   Utilcode util;
   vision_object_s_t cube = vision_sensor.get_by_size(0);
   static int coord [2];
-  float error = 158 - coord[0];
+  float error = 20;
 public:
   void startup()
   {
