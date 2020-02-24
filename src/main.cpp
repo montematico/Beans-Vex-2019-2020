@@ -10,7 +10,7 @@
  */
 void initialize() {
 	Utilcode util;
-	VisionCode vision;
+	Visioncode vision;
 	util.startup();
 	vision.startup();
 	//OKAPIinit();
@@ -62,32 +62,37 @@ void competition_initialize()
  */
 void autonomous()
 {
+	Visioncode vision;
 	Liftcode lift;
 	Clawcode claw;
 	Drivecode drive;
 	auto chassis = ChassisControllerBuilder()
 	.withMotors(
-	6,  // Top left
-	-9, // Top right
-	-8, // Bottom right
-	7   // Bottom left
+		6,  // Top
+		-9, // Top right
+		-8, // Bottom right
+		7   // Bottom left
 	)
 	// Green gearset, 4 in wheel diam, 11.5 in wheel track
 	.withDimensions(AbstractMotor::gearset::green, {{4_in, 18_in}, imev5GreenTPR})
 	.withMaxVelocity(100)
 	.withOdometry()
 	.buildOdometry();
-claw.close();
-chassis->moveDistance(8_in);
-lift.move(-80);
-chassis->turnAngle(270_deg);
-lift.move(0);
-chassis->moveDistance(1_ft);
-claw.open();
-pros::Task::delay(500);
-claw.stop();
+
+	//Begin Auton code
+	if (true)
+	{
+		vision.turncube();
+		vision.gocube(); //GOcube calls on turcube if it detects error is too large.
+		lift.move(-30);
+		claw.open();
+		pros::Task::delay(500);
+		claw.close();
+		lift.move(50);
+		pros::Task::delay(1000);
+		lift.stop();
+	}
 }
-//te
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -101,17 +106,17 @@ claw.stop();
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() {
+void opcontrol()
+{
 	Clawcode claw;
 	Liftcode lift;
 	Drivecode drive;
 	Utilcode util;
-	VisionCode vision;
+	Visioncode vision;
 
 	controller.rumble("..");
 	util.startup();
 	vision.startup();
-	//vision.findcube();
 	while (true)
 	{
 		//Hands over control of all components to user.

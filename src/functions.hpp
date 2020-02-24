@@ -207,6 +207,11 @@ public:
     Llift.move(pwr);
     Rlift.move(pwr);
   }
+  void stop()
+  {
+    Llift.move(0);
+    Rlift.move(0);
+  }
   void usrctrl() //controls lift with controller
   {
     if(controller.get_digital(E_CONTROLLER_DIGITAL_R2))
@@ -228,7 +233,7 @@ public:
 
 
 
-class VisionCode
+class Visioncode
 {
 private:
   std::map<std::string,float> tuner = {{"KP", 0.3}, {"KI", 0.1}, {"KD", 5}}; //A bunch of tuner varables that are easier to keep here.
@@ -237,7 +242,7 @@ private:
   Clawcode claw;
   Utilcode util;
   vision_object_s_t cube = vision_sensor.get_by_size(0);
-  static int coord [2];
+  int coord[2] ={cube.x_middle_coord, cube.y_middle_coord};
   float error = 20;
 public:
   void startup()
@@ -263,7 +268,6 @@ public:
     coord [0] = cube.x_middle_coord;
     coord [1] = cube.y_middle_coord;
     printf("x:%d y:%d \n",cube.x_middle_coord, cube.y_middle_coord);
-    float error = 6; //Initialized with 6 b/c otherwise the loop wont begin.
 
     while(error >= 5) //Change second value to make more or less precice before exiting loop
     {
@@ -280,12 +284,14 @@ public:
       float prevError = error;
       float derivative = error - prevError;
       float power = error*tuner.at("KP") + integral*tuner.at("KI") + derivative*tuner.at("KD");
-      drive.turnright(power); //Applies power to motor.
+      if (error <= 316) drive.turnright(power); //Applies power to motor.
+      else (drive.turnleft(30));
       pros::Task::delay(15);
     }
   }
   void gocube() //Should measure distance to cube and go pick it up.
   {
+    //If error gets too big code will exit
     //MAKE THIS A PID LOOP IF YOU WANT or dont, I dont care as long as it works.
     claw.open();
     pros::Task::delay(500);
@@ -296,8 +302,6 @@ public:
       error = 158 - coord[0];
       if (error >= 10) this->turncube();
     }
-    drive.stop();
-    claw.close();
   }
 
   void findtest()
