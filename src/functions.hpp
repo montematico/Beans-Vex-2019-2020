@@ -296,12 +296,16 @@ public:
     claw.open();
     pros::Task::delay(500);
     claw.stop();
-    while(util.get_value() >= 5)
+    while(true)
     {
+      printf("Distance: %d\n",Cubesense.get_value());
       drive.gofw(50);
       error = 158 - coord[0];
-      if (error >= 10) this->turncube();
+
+      //if (error >= 10) this->turncube();
+      pros::Task::delay(1000);
     }
+    printf("Arrived at target");
   }
 
   void findtest()

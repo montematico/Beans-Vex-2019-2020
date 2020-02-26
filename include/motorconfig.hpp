@@ -19,11 +19,11 @@ pros::Motor Llift (1,E_MOTOR_GEARSET_36,false);
 pros::Motor Clawmotor (19,E_MOTOR_GEARSET_36,false);
 
 //3 wire
-pros::ADIDigitalIn Ulimit (1);
-pros::ADIDigitalIn Dlimit (2);
+pros::ADIDigitalIn Ulimit (7);
+pros::ADIDigitalIn Dlimit (8);
 pros::ADIUltrasonic Rsense(3,4);
 pros::ADIUltrasonic Lsense(5,6);
-pros::ADIUltrasonic Cubesense(7,8);
+pros::ADIUltrasonic Cubesense('A','B');
 
 //Vision
 pros::Vision vision_sensor (18,E_VISION_ZERO_TOPLEFT);

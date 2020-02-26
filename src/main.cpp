@@ -62,26 +62,29 @@ void competition_initialize()
  */
 void autonomous()
 {
+	//initializes all the classes and other garbage I use for auton
 	Visioncode vision;
 	Liftcode lift;
 	Clawcode claw;
 	Drivecode drive;
-	auto chassis = ChassisControllerBuilder()
-	.withMotors(
+	auto chassis = ChassisControllerBuilder() //Init for OKAPI which allows for odometry and other cool functions
+	.withMotors( //Creates chassis as x-drive model
 		6,  // Top
 		-9, // Top right
 		-8, // Bottom right
 		7   // Bottom left
 	)
 	// Green gearset, 4 in wheel diam, 11.5 in wheel track
-	.withDimensions(AbstractMotor::gearset::green, {{4_in, 18_in}, imev5GreenTPR})
-	.withMaxVelocity(100)
-	.withOdometry()
-	.buildOdometry();
+	.withDimensions(AbstractMotor::gearset::green, {{4_in, 18_in}, imev5GreenTPR}) //Allows for odometry by using onboard encoders
+	.withMaxVelocity(100) //tones down speed since it go too fast otherwise
+	.withOdometry() //Adds odemetry
+	.buildOdometry(); //builds chassis object
 
 	//Begin Auton code
 	if (true)
 	{
+		chassis->moveDistance(5_in); //Deploys claw but leaping forward then stopping
+
 		vision.turncube();
 		vision.gocube(); //GOcube calls on turcube if it detects error is too large.
 		lift.move(-30);
@@ -117,6 +120,14 @@ void opcontrol()
 	controller.rumble("..");
 	util.startup();
 	vision.startup();
+
+while(true)
+{
+	printf("Distance: %d\n", Cubesense.get_value());
+	pros::Task::delay(1000);
+}
+//	vision.turncube();
+	//vision.gocube();
 	while (true)
 	{
 		//Hands over control of all components to user.
