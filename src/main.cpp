@@ -121,13 +121,8 @@ void opcontrol()
 	util.startup();
 	vision.startup();
 
-while(true)
-{
-	printf("Distance: %d\n", Cubesense.get_value());
-	pros::Task::delay(1000);
-}
 //	vision.turncube();
-	//vision.gocube();
+	vision.gocube();
 	while (true)
 	{
 		//Hands over control of all components to user.

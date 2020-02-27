@@ -147,7 +147,7 @@ public:
   }
   float get_value() //Returns ultrasonic sensor value in inches since in lazy as hell
   {
-    return Cubesense.get_value() * 2.54;
+    return Cubesense.get_value() * 10 * 2.54; //converts from mm to cm then to in. since everything else is metric.
   }
   void usrctrl() //Sets the robot into precise mode where everying runs at half speed
   {
@@ -296,15 +296,15 @@ public:
     claw.open();
     pros::Task::delay(500);
     claw.stop();
-    while(true)
+    while(error <= 10) //This is a little wack so the turbcube doesnt exit back into the goloop creating a *possible* recursion
     {
-      printf("Distance: %d\n",Cubesense.get_value());
+      printf("Distance: %f\n",util.get_value());
       drive.gofw(50);
       error = 158 - coord[0];
-
-      //if (error >= 10) this->turncube();
+      if (util.get_value() < 5) break; //Breaks the loop if the distance in less than 5 inches
       pros::Task::delay(1000);
     }
+    if (error >= 10) this->turncube(); //If the error of the cube is too large it will go to the turncube function.
     printf("Arrived at target");
   }
 
