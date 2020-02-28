@@ -122,7 +122,7 @@ void opcontrol()
 	vision.startup();
 
 //	vision.turncube();
-	vision.gocube();
+	vision.test();
 	while (true)
 	{
 		//Hands over control of all components to user.

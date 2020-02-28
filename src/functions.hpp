@@ -145,9 +145,9 @@ public:
     FL.set_brake_mode(E_MOTOR_BRAKE_COAST);
     FR.set_brake_mode(E_MOTOR_BRAKE_COAST);
   }
-  float get_value() //Returns ultrasonic sensor value in inches since in lazy as hell
+  int get_value() //Returns ultrasonic sensor value in inches since in lazy as hell
   {
-    return Cubesense.get_value() * 10 * 2.54; //converts from mm to cm then to in. since everything else is metric.
+    return (Cubesense.get_value() * 2.54); //converts from mm to cm then to in. since everything else is metric.
   }
   void usrctrl() //Sets the robot into precise mode where everying runs at half speed
   {
@@ -293,9 +293,6 @@ public:
   {
     //If error gets too big code will exit
     //MAKE THIS A PID LOOP IF YOU WANT or dont, I dont care as long as it works.
-    claw.open();
-    pros::Task::delay(500);
-    claw.stop();
     while(error <= 10) //This is a little wack so the turbcube doesnt exit back into the goloop creating a *possible* recursion
     {
       printf("Distance: %f\n",util.get_value());
@@ -307,19 +304,19 @@ public:
     if (error >= 10) this->turncube(); //If the error of the cube is too large it will go to the turncube function.
     printf("Arrived at target");
   }
-
-  void findtest()
+  void test()
   {
-    while(true)
-    {
-
-      vision_object_s_t cube = vision_sensor.get_by_size(0);
-      int coord [2] = {cube.x_middle_coord, cube.y_middle_coord};
-      printf("x:%d y:%d \n",cube.x_middle_coord, cube.y_middle_coord);
-      pros::Task::delay(1000);
-    }
+      //If error gets too big code will exit
+      //MAKE THIS A PID LOOP IF YOU WANT or dont, I dont care as long as it works.
+      while(true) //This is a little wack so the turbcube doesnt exit back into the goloop creating a *possible* recursion
+      {
+        printf("Distance: %d\n",util.get_value());
+        drive.gofw(50);
+        error = 158 - coord[0];
+        if (util.get_value() < 5) drive.gofw(0); //Breaks the loop if the distance in less than 5 inches
+        pros::Task::delay(1000);
+      }
   }
-
 };
 
 
