@@ -145,9 +145,9 @@ public:
     FL.set_brake_mode(E_MOTOR_BRAKE_COAST);
     FR.set_brake_mode(E_MOTOR_BRAKE_COAST);
   }
-  int get_value() //Returns ultrasonic sensor value in inches since in lazy as hell
+  float get_value() //Fixes ultrasonic value to cm and substracts 10 mm since it has an error.
   {
-    return (Cubesense.get_value() * 2.54); //converts from mm to cm then to in. since everything else is metric.
+     return (((Cubesense.get_value()-10)/10)/2.54);
   }
   void usrctrl() //Sets the robot into precise mode where everying runs at half speed
   {
@@ -291,30 +291,34 @@ public:
   }
   void gocube() //Should measure distance to cube and go pick it up.
   {
+    float tuner[3] = {0.3,0.1,5.0};
+    float toCube = 8;
     //If error gets too big code will exit
     //MAKE THIS A PID LOOP IF YOU WANT or dont, I dont care as long as it works.
-    while(error <= 10) //This is a little wack so the turbcube doesnt exit back into the goloop creating a *possible* recursion
+    while(error <= toCube) //This is a little wack so the turbcube doesnt exit back into the goloop creating a *possible* recursion
     {
-      printf("Distance: %f\n",util.get_value());
-      drive.gofw(50);
-      error = 158 - coord[0];
-      if (util.get_value() < 5) break; //Breaks the loop if the distance in less than 5 inches
-      pros::Task::delay(1000);
+
+      error = toCube - util.get_value();
+      float integral = integral + error;
+      if (error <= toCube && fabs(error) >= 300) integral = 0;
+      float prevError = error;
+      float derivative = error - prevError;
+      float power = error *tuner[0] + integral*tuner[1] + derivative*tuner[2];
+      drive.gofw(power);
+      printf("Distance:%f Error:%f, Power: %f\n",util.get_value(),error,power);
+      pros::Task::delay(15);
     }
     if (error >= 10) this->turncube(); //If the error of the cube is too large it will go to the turncube function.
     printf("Arrived at target");
   }
   void test()
   {
-      //If error gets too big code will exit
-      //MAKE THIS A PID LOOP IF YOU WANT or dont, I dont care as long as it works.
-      while(true) //This is a little wack so the turbcube doesnt exit back into the goloop creating a *possible* recursion
+    //DO NOT USE IN PRODUCTION CODE
+    //prints the distance in inches and the raw value from the sonar sensor. Used for debugging.
+      while(true)
       {
-        printf("Distance: %d\n",util.get_value());
-        drive.gofw(50);
-        error = 158 - coord[0];
-        if (util.get_value() < 5) drive.gofw(0); //Breaks the loop if the distance in less than 5 inches
-        pros::Task::delay(1000);
+        printf("Mod Dist: %f, RawDist: %d\n",util.get_value(), Cubesense.get_value());
+        pros::Task::delay(5000);
       }
   }
 };
