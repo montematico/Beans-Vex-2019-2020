@@ -13,8 +13,6 @@ void initialize() {
 	Visioncode vision;
 	util.startup();
 	vision.startup();
-	//OKAPIinit();
-	pros::Task::delay(500);
 }
 
 /**
@@ -23,6 +21,9 @@ void initialize() {
  * the robot is enabled, this task will exit.
  */
 void disabled() {
+	vision_sensor.set_led(COLOR_RED);
+	pros::Task::delay(500);
+	vision_sensor.set_led(COLOR_YELLOW);
 }
 //Pre auton
 /**
@@ -80,15 +81,16 @@ void autonomous()
 	.withOdometry() //Adds odemetry
 	.buildOdometry(); //builds chassis object
 
+	extern int autonSelection; //The int returned for auton select
 	//Begin Auton code
 	if (true)
 	{
-		chassis->moveDistance(5_in); //Deploys claw but leaping forward then stopping
-
-		vision.turncube();
-		vision.gocube(); //GOcube calls on turcube if it detects error is too large.
-		lift.move(-30);
 		claw.open();
+		cantsee:
+		chassis->moveDistance(5_in); //Deploys claw but leaping forward then stopping
+		vision.turncube();
+		if(!vision.gocube()) goto cantsee; //GOcube calls on turcube if it detects error is too large.
+		lift.move(-30);
 		pros::Task::delay(500);
 		claw.close();
 		lift.move(50);
@@ -121,8 +123,6 @@ void opcontrol()
 	util.startup();
 	vision.startup();
 
-	 //vision.turncube();
-		vision.gocube();
 	while (true)
 	{
 		//Hands over control of all components to user.

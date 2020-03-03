@@ -1,5 +1,9 @@
 # Compiled Object files
 *.o
 *.obj
-
+*.bin
+*.elf
+/bin
+#Misc files that are annoying
+visionCodes.txt
 .vscode*

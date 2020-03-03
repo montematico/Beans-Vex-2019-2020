@@ -236,7 +236,7 @@ public:
 class Visioncode
 {
 private:
-  std::map<std::string,float> tuner = {{"KP", 0.3}, {"KI", 0.1}, {"KD", 5}}; //A bunch of tuner varables that are easier to keep here.
+  std::map<std::string,float> tuner = {{"KP", 0.3}, {"KI", 0.1}, {"KD", 2}}; //A bunch of tuner varables that are easier to keep here.
   //This is the tuners used for all vision based turning PID loops.
   Drivecode drive;
   Clawcode claw;
@@ -261,15 +261,16 @@ public:
   }
 
   //Turns to find a cube until error is below and allowed limit
-  void turncube()
+  bool turncube()
   {
-    auto chassis = ChassisControllerBuilder().withMotors(6,-9,-8,7).withDimensions(AbstractMotor::gearset::green, {{4_in, 18_in}, imev5GreenTPR}).withMaxVelocity(100).withOdometry().buildOdometry();
+    //setting a bunch of variables to their appropiate defaults and initializing OKAPI
+  //auto chassis = ChassisControllerBuilder().withMotors(6,-9,-8,7).withDimensions(AbstractMotor::gearset::green, {{4_in, 18_in}, imev5GreenTPR}).withMaxVelocity(100).withOdometry().buildOdometry();
     cube = vision_sensor.get_by_size(0);
     coord [0] = cube.x_middle_coord;
     coord [1] = cube.y_middle_coord;
     printf("x:%d y:%d \n",cube.x_middle_coord, cube.y_middle_coord);
 
-    while(error >= 5) //Change second value to make more or less precice before exiting loop
+    while(true) //Change second value to make more or less precice before exiting loop
     {
       //Gets the nth largest object the camera sees and saves it to the coord array
       cube = vision_sensor.get_by_size(0);
@@ -286,31 +287,74 @@ public:
       float power = error*tuner.at("KP") + integral*tuner.at("KI") + derivative*tuner.at("KD");
       if (error <= 316) drive.turnright(power); //Applies power to motor.
       else (drive.turnleft(30));
-      pros::Task::delay(15);
+
+
+      if (error < 5)
+      {
+        drive.stop();
+        for (int i = 0; i > 10; i++)
+        {
+          //This function tests that readings from camera arent a fluke, so when a small value is detected it waits for 100ms of continues inbound readings
+          //Before proceding, otherwise it breaks from the loop and continues looking for the cube.
+          if(util.get_value() > 5)
+          {
+            goto turnFluke; //I could use a bool and test to see how many loops to break from but its easier with a goto
+          }
+          pros::Task::delay(10);
+        }
+        return true;
+      }
+    turnFluke:
+    pros::Task::delay(15);
     }
   }
-  void gocube() //Should measure distance to cube and go pick it up.
+
+  bool gocube() //Should measure distance to cube and go pick it up.
   {
-    float tuner[3] = {0.3,0.1,5.0};
+    float tuner[3] = {0.1,0.1,1};
     float toCube = 8;
+
     //If error gets too big code will exit
     //MAKE THIS A PID LOOP IF YOU WANT or dont, I dont care as long as it works.
-    while(error <= toCube) //This is a little wack so the turbcube doesnt exit back into the goloop creating a *possible* recursion
+    while(true) //This is a little wack so the turbcube doesnt exit back into the goloop creating a *possible* recursion
     {
-
-      error = toCube - util.get_value();
+      error = fabs(toCube - util.get_value());
       float integral = integral + error;
-      if (error <= toCube && fabs(error) >= 300) integral = 0;
+      if (error == 0 || fabs(error) <= toCube) integral = 0;
+      if (error >= 90) integral = 0;
       float prevError = error;
       float derivative = error - prevError;
       float power = error *tuner[0] + integral*tuner[1] + derivative*tuner[2];
-      drive.gofw(power);
+
+      if (util.get_value() <= toCube)
+      { drive.gofw(power); }
+      else
+      {
+        drive.stop();
+        for (int i = 0; i > 10; i++)
+        {
+          //This function tests that readings from ultrasonic arent a fluke, so when a small value is detected it waits for 100ms of inbound readings
+          //Before proceding, otherwise it breaks from the loop and continues travelling towards the cube.
+          if(util.get_value() > toCube) goto gofluke; //I could use a bool and test to see how many loops to break from but its easier with a goto
+          pros::Task::delay(10);
+        }
+        //Only executes if the value wasnt a fluke
+        printf("%fin away, exiting",util.get_value());
+        return true; //true means that it is placed infront of a cube.
+      }
+      coord[0] = cube.x_middle_coord;
+      if(fabs(158 - coord[0]) >= 7)
+      {
+      printf("Cube no longer ahead, exiting");
+      return false; //tests if the cube is still within the accatable range for grabbing, if not it returns false and exits
+      }
+      gofluke:
       printf("Distance:%f Error:%f, Power: %f\n",util.get_value(),error,power);
       pros::Task::delay(15);
     }
-    if (error >= 10) this->turncube(); //If the error of the cube is too large it will go to the turncube function.
-    printf("Arrived at target");
   }
+
+
   void test()
   {
     //DO NOT USE IN PRODUCTION CODE
@@ -322,8 +366,6 @@ public:
       }
   }
 };
-
-
 //Wow, you read (or skipped) through all the code, nice!
 //I self taught myself c++ and this code has iterated through many versions.
 //The first version was in VCS and had no functions.
