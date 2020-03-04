@@ -236,8 +236,6 @@ public:
 class Visioncode
 {
 private:
-  std::map<std::string,float> tuner = {{"KP", 0.3}, {"KI", 0.1}, {"KD", 2}}; //A bunch of tuner varables that are easier to keep here.
-  //This is the tuners used for all vision based turning PID loops.
   Drivecode drive;
   Clawcode claw;
   Utilcode util;
@@ -247,8 +245,6 @@ private:
 public:
   void startup()
   {
-    //Disables Wifi just in case. ;)
-    vision_sensor.set_wifi_mode(0);
 
     //Sets preset signatures
      vision_sensor.clear_led();
@@ -261,13 +257,14 @@ public:
   }
 
   //Turns to find a cube until error is below and allowed limit
-  bool turncube()
+  bool turncube(bool debug = false)
   {
     //setting a bunch of variables to their appropiate defaults and initializing OKAPI
   //auto chassis = ChassisControllerBuilder().withMotors(6,-9,-8,7).withDimensions(AbstractMotor::gearset::green, {{4_in, 18_in}, imev5GreenTPR}).withMaxVelocity(100).withOdometry().buildOdometry();
     cube = vision_sensor.get_by_size(0);
     coord [0] = cube.x_middle_coord;
     coord [1] = cube.y_middle_coord;
+    std::map<std::string,float> tuner = {{"KP",0.7}, {"KI", 0}, {"KD", 0.5}}; //A bunch of PID tuning varaibles. its a MAP because im stupid
     printf("x:%d y:%d \n",cube.x_middle_coord, cube.y_middle_coord);
 
     while(true) //Change second value to make more or less precice before exiting loop
@@ -281,38 +278,41 @@ public:
       //Calculates all the values for the PID loop
       error = 158 - coord[0];
       float integral = integral + error;
-      if (error <= 10 && fabs(error) >= 300) integral = 0;
+      if (error <= 10 || fabs(error) >= 300) integral = 0;
       float prevError = error;
       float derivative = error - prevError;
       float power = error*tuner.at("KP") + integral*tuner.at("KI") + derivative*tuner.at("KD");
       if (error <= 316) drive.turnright(power); //Applies power to motor.
       else (drive.turnleft(30));
 
-
-      if (error < 5)
+      if(!debug)
       {
-        drive.stop();
-        for (int i = 0; i > 10; i++)
+        if (error <= 5)
         {
-          //This function tests that readings from camera arent a fluke, so when a small value is detected it waits for 100ms of continues inbound readings
-          //Before proceding, otherwise it breaks from the loop and continues looking for the cube.
-          if(util.get_value() > 5)
+          drive.stop();
+          for (int i = 0; i > 10; i++)
           {
-            goto turnFluke; //I could use a bool and test to see how many loops to break from but its easier with a goto
+            //This function tests that readings from camera arent a fluke, so when a small value is detected it waits for 100ms of continues inbound readings
+            //Before proceding, otherwise it breaks from the loop and continues looking for the cube.
+            if(util.get_value() > 5)
+            {
+              goto turnFluke; //I could use a bool and test to see how many loops to break from but its easier with a goto
+            }
+            pros::Task::delay(10);
           }
-          pros::Task::delay(10);
+          return true;
         }
-        return true;
       }
     turnFluke:
+    printf("Error:%f, Power: %f\n",error,power);
     pros::Task::delay(15);
     }
   }
 
-  bool gocube() //Should measure distance to cube and go pick it up.
+  bool gocube(bool debug = false) //Should measure distance to cube and go pick it up.
   {
-    float tuner[3] = {0.1,0.1,1};
-    float toCube = 8;
+    float tuner[3] = {2.5,0,0};
+    float toCube = 2;
 
     //If error gets too big code will exit
     //MAKE THIS A PID LOOP IF YOU WANT or dont, I dont care as long as it works.
@@ -326,9 +326,8 @@ public:
       float derivative = error - prevError;
       float power = error *tuner[0] + integral*tuner[1] + derivative*tuner[2];
 
-      if (util.get_value() <= toCube)
-      { drive.gofw(power); }
-      else
+      if(util.get_value() <= toCube) drive.gofw(power);
+      else if(!debug)
       {
         drive.stop();
         for (int i = 0; i > 10; i++)
@@ -343,7 +342,7 @@ public:
         return true; //true means that it is placed infront of a cube.
       }
       coord[0] = cube.x_middle_coord;
-      if(fabs(158 - coord[0]) >= 7)
+      if(fabs(158 - coord[0]) >= 7 && !debug)
       {
       printf("Cube no longer ahead, exiting");
       return false; //tests if the cube is still within the accatable range for grabbing, if not it returns false and exits

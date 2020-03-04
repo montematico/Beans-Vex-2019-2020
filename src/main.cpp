@@ -21,9 +21,11 @@ void initialize() {
  * the robot is enabled, this task will exit.
  */
 void disabled() {
+	disabled:
 	vision_sensor.set_led(COLOR_RED);
 	pros::Task::delay(500);
 	vision_sensor.set_led(COLOR_YELLOW);
+	goto disabled;
 }
 //Pre auton
 /**
@@ -37,6 +39,8 @@ void disabled() {
  */
 void competition_initialize()
 {
+	//Disables Wifi just in case. ;)
+	vision_sensor.set_wifi_mode(0);
 	/*
     autonSelection == 1 :Blue Front
     autonSelection == 2 : Blue Back
@@ -85,11 +89,16 @@ void autonomous()
 	//Begin Auton code
 	if (true)
 	{
-		claw.open();
-		cantsee:
+
 		chassis->moveDistance(5_in); //Deploys claw but leaping forward then stopping
+		claw.open();
+		pros::Task::delay(500);
+		claw.stop();
+
+		cantsee:
 		vision.turncube();
 		if(!vision.gocube()) goto cantsee; //GOcube calls on turcube if it detects error is too large.
+
 		lift.move(-30);
 		pros::Task::delay(500);
 		claw.close();

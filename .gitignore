@@ -1,9 +1,9 @@
 # Compiled Object files
 *.o
 *.obj
-*.bin
-*.elf
-/bin
+bin\*
 #Misc files that are annoying
 visionCodes.txt
 .vscode*
+*.elf
+*.bin
