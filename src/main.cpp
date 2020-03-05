@@ -132,6 +132,7 @@ void opcontrol()
 	util.startup();
 	vision.startup();
 
+	while(true) claw.Csense(true);
 	while (true)
 	{
 		//Hands over control of all components to user.

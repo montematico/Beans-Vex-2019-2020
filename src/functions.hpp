@@ -4,41 +4,70 @@ float prate = 1.00;
 //CLASSES MAKE IT COOLER
 // Making Drive Train Variables Global
 
-class Clawcode
+class Utilcode
 {
-private:
-  const float speed = 60; //sets speed of claw
 public:
-    char status; //can be read by other functions to see if motor is opening stopped or closed.
-    void open()
+    void startup() //Performs all neccecary startup procedures like setting brake modes and resetting encoders
+  {
+    //Sets motor brake mode
+    Clawmotor.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+    Llift.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+    Rlift.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+    BL.set_brake_mode(E_MOTOR_BRAKE_COAST);
+    BR.set_brake_mode(E_MOTOR_BRAKE_COAST);
+    FL.set_brake_mode(E_MOTOR_BRAKE_COAST);
+    FR.set_brake_mode(E_MOTOR_BRAKE_COAST);
+  }
+  float get_value() //Fixes ultrasonic value to cm and substracts 10 mm since it has an error.
+  {
+     return (((Cubesense.get_value()-10)/10)/2.54);
+  }
+  void usrctrl() //Sets the robot into precise mode where everying runs at half speed
+  {
+    if(controller.get_digital(E_CONTROLLER_DIGITAL_DOWN))
     {
-      status = 'o';
-      Clawmotor.move(-speed);
-    }
-    void close()
+      prate = 0.50;
+    } else if (controller.get_digital(E_CONTROLLER_DIGITAL_UP))
     {
-      status = 'c';
-      Clawmotor.move(speed);
+      prate = 1.00;
     }
-    void stop()
-    {
-      status = 's';
-      Clawmotor.move(0);
-    }
-    void usrctrl()
-    {
-      if(controller.get_digital(E_CONTROLLER_DIGITAL_L1))
-      {
-         Clawmotor.move(speed * prate);
-      } else if(controller.get_digital(E_CONTROLLER_DIGITAL_L2))
-      {
-        Clawmotor.move(-speed * prate);
-      } else
-      {
-        Clawmotor.move(0);
-      }
-    }
-  };
+  }
+  void abort() //Function that kills all motors if shit really hits the fan
+  {
+    BL.move(0);
+    BR.move(0);
+    FL.move(0);
+    FR.move(0);
+    Llift.move(0);
+    Rlift.move(0);
+    Clawmotor.move(0);
+  }
+  void OKAPIinit()
+  {
+    //Initiales the okapi library to allow for better auton control.
+    auto chassis = ChassisControllerBuilder()
+    .withMotors(
+    6,  // Top left
+    8, // Top right (reversed)
+    9, // Bottom right (reversed)
+    7   // Bottom left
+    )
+    // Green gearset, 4 in wheel diam, 11.5 in wheel track
+    .withDimensions(AbstractMotor::gearset::green, {{4_in, 11.5_in}, imev5GreenTPR})
+    .build();
+  }
+  void autonrecord()
+  {
+    clock_t  t;
+    t = clock();
+    printf("%lu\n", t);
+    printf("FR: %d\n", FR.get_voltage());
+    printf("FL: %d\n", FL.get_voltage());
+    printf("BR: %d\n", BR.get_voltage());
+    printf("BL: %d\n", BL.get_voltage());
+
+  }
+};
 
 class Drivecode
 {
@@ -131,70 +160,59 @@ public:
   }
 };
 
-class Utilcode
+class Clawcode  : public Utilcode , public Drivecode
 {
+private:
+  const float speed = 60; //sets speed of claw
 public:
-    void startup() //Performs all neccecary startup procedures like setting brake modes and resetting encoders
-  {
-    //Sets motor brake mode
-    Clawmotor.set_brake_mode(E_MOTOR_BRAKE_HOLD);
-    Llift.set_brake_mode(E_MOTOR_BRAKE_HOLD);
-    Rlift.set_brake_mode(E_MOTOR_BRAKE_HOLD);
-    BL.set_brake_mode(E_MOTOR_BRAKE_COAST);
-    BR.set_brake_mode(E_MOTOR_BRAKE_COAST);
-    FL.set_brake_mode(E_MOTOR_BRAKE_COAST);
-    FR.set_brake_mode(E_MOTOR_BRAKE_COAST);
-  }
-  float get_value() //Fixes ultrasonic value to cm and substracts 10 mm since it has an error.
-  {
-     return (((Cubesense.get_value()-10)/10)/2.54);
-  }
-  void usrctrl() //Sets the robot into precise mode where everying runs at half speed
-  {
-    if(controller.get_digital(E_CONTROLLER_DIGITAL_DOWN))
+    char status; //can be read by other functions to see if motor is opening stopped or closed.
+    void open()
     {
-      prate = 0.50;
-    } else if (controller.get_digital(E_CONTROLLER_DIGITAL_UP))
-    {
-      prate = 1.00;
+      status = 'o';
+      Clawmotor.move(-speed);
     }
-  }
-  void abort() //Function that kills all motors if shit really hits the fan
-  {
-    BL.move(0);
-    BR.move(0);
-    FL.move(0);
-    FR.move(0);
-    Llift.move(0);
-    Rlift.move(0);
-    Clawmotor.move(0);
-  }
-  void OKAPIinit()
-  {
-    //Initiales the okapi library to allow for better auton control.
-    auto chassis = ChassisControllerBuilder()
-    .withMotors(
-    6,  // Top left
-    8, // Top right (reversed)
-    9, // Bottom right (reversed)
-    7   // Bottom left
-    )
-    // Green gearset, 4 in wheel diam, 11.5 in wheel track
-    .withDimensions(AbstractMotor::gearset::green, {{4_in, 11.5_in}, imev5GreenTPR})
-    .build();
-  }
-  void autonrecord()
-  {
-    clock_t  t;
-    t = clock();
-    printf("%lu\n", t);
-    printf("FR: %d\n", FR.get_voltage());
-    printf("FL: %d\n", FL.get_voltage());
-    printf("BR: %d\n", BR.get_voltage());
-    printf("BL: %d\n", BL.get_voltage());
+    void close()
+    {
+      status = 'c';
+      Clawmotor.move(speed);
+    }
+    void stop()
+    {
+      status = 's';
+      Clawmotor.move(0);
+    }
+    void usrctrl()
+    {
+      if(controller.get_digital(E_CONTROLLER_DIGITAL_L1))
+      {
+         Clawmotor.move(speed * prate);
+      } else if(controller.get_digital(E_CONTROLLER_DIGITAL_L2))
+      {
+        Clawmotor.move(-speed * prate);
+      } else
+      {
+        Clawmotor.move(0);
+      }
+    }
+    bool Csense(bool debug = false) //Sh**ty little function that return true if it senses a cube in the claw & false if it doesnt
+    { //debug flag outs puts it in a loop that continually returns the value and if cube is seen
+      float clawSpan = 14; //How wide the claw is when fully extended in _in
+      Cdebug:
+      if(this->get_value() > 14)
+      {
+        return false;
+        printf("No Cube Sensed :(\n");
+      } else
+      {
+        return true;
+        printf("Cube sensed!\n");
+      }
+      printf("Distance:%f\n",this->get_value());
+      if(debug) goto Cdebug;
+    }
+  };
 
-  }
-};
+
 
 class Liftcode //Code concerning the lift
 {
@@ -233,15 +251,13 @@ public:
 
 
 
-class Visioncode
+class Visioncode : public Clawcode
 {
 private:
-  Drivecode drive;
-  Clawcode claw;
-  Utilcode util;
+  float error = 20;
+protected:
   vision_object_s_t cube = vision_sensor.get_by_size(0);
   int coord[2] ={cube.x_middle_coord, cube.y_middle_coord};
-  float error = 20;
 public:
   void startup()
   {
@@ -257,7 +273,7 @@ public:
   }
 
   //Turns to find a cube until error is below and allowed limit
-  bool turncube(bool debug = false)
+  bool turncube(bool debug = false,bool going = false)
   {
     //setting a bunch of variables to their appropiate defaults and initializing OKAPI
   //auto chassis = ChassisControllerBuilder().withMotors(6,-9,-8,7).withDimensions(AbstractMotor::gearset::green, {{4_in, 18_in}, imev5GreenTPR}).withMaxVelocity(100).withOdometry().buildOdometry();
@@ -282,19 +298,31 @@ public:
       float prevError = error;
       float derivative = error - prevError;
       float power = error*tuner.at("KP") + integral*tuner.at("KI") + derivative*tuner.at("KD");
-      if (error <= 316) drive.turnright(power); //Applies power to motor.
-      else (drive.turnleft(30));
 
+      if(going)
+      {
+        debug = true;
+        if (error < 5)
+        {
+          this->gofw(50);
+          if(this->Csense())
+          {
+            this->stop();
+            this->close();
+            return true;
+          }
+        }
+      }
       if(!debug)
       {
         if (error <= 5)
         {
-          drive.stop();
+          this->stop();
           for (int i = 0; i > 10; i++)
           {
             //This function tests that readings from camera arent a fluke, so when a small value is detected it waits for 100ms of continues inbound readings
             //Before proceding, otherwise it breaks from the loop and continues looking for the cube.
-            if(util.get_value() > 5)
+            if(this->get_value() > 5)
             {
               goto turnFluke; //I could use a bool and test to see how many loops to break from but its easier with a goto
             }
@@ -308,7 +336,6 @@ public:
     pros::Task::delay(15);
     }
   }
-
   bool gocube(bool debug = false) //Should measure distance to cube and go pick it up.
   {
     float tuner[3] = {2.5,0,0};
@@ -318,7 +345,7 @@ public:
     //MAKE THIS A PID LOOP IF YOU WANT or dont, I dont care as long as it works.
     while(true) //This is a little wack so the turbcube doesnt exit back into the goloop creating a *possible* recursion
     {
-      error = fabs(toCube - util.get_value());
+      error = fabs(toCube - this->get_value());
       float integral = integral + error;
       if (error == 0 || fabs(error) <= toCube) integral = 0;
       if (error >= 90) integral = 0;
@@ -326,19 +353,19 @@ public:
       float derivative = error - prevError;
       float power = error *tuner[0] + integral*tuner[1] + derivative*tuner[2];
 
-      if(util.get_value() <= toCube) drive.gofw(power);
+      if(this->get_value() <= toCube) this->gofw(power);
       else if(!debug)
       {
-        drive.stop();
+        this->stop();
         for (int i = 0; i > 10; i++)
         {
           //This function tests that readings from ultrasonic arent a fluke, so when a small value is detected it waits for 100ms of inbound readings
           //Before proceding, otherwise it breaks from the loop and continues travelling towards the cube.
-          if(util.get_value() > toCube) goto gofluke; //I could use a bool and test to see how many loops to break from but its easier with a goto
+          if(this->get_value() > toCube) goto gofluke; //I could use a bool and test to see how many loops to break from but its easier with a goto
           pros::Task::delay(10);
         }
         //Only executes if the value wasnt a fluke
-        printf("%fin away, exiting",util.get_value());
+        printf("%fin away, exiting",this->get_value());
         return true; //true means that it is placed infront of a cube.
       }
       coord[0] = cube.x_middle_coord;
@@ -348,23 +375,24 @@ public:
       return false; //tests if the cube is still within the accatable range for grabbing, if not it returns false and exits
       }
       gofluke:
-      printf("Distance:%f Error:%f, Power: %f\n",util.get_value(),error,power);
+      printf("Distance:%f Error:%f, Power: %f\n",this->get_value(),error,power);
       pros::Task::delay(15);
     }
   }
-
-
   void test()
   {
     //DO NOT USE IN PRODUCTION CODE
     //prints the distance in inches and the raw value from the sonar sensor. Used for debugging.
       while(true)
       {
-        printf("Mod Dist: %f, RawDist: %d\n",util.get_value(), Cubesense.get_value());
+        printf("Mod Dist: %f, RawDist: %d\n",this->get_value(), Cubesense.get_value());
         pros::Task::delay(5000);
       }
   }
 };
+
+
+
 //Wow, you read (or skipped) through all the code, nice!
 //I self taught myself c++ and this code has iterated through many versions.
 //The first version was in VCS and had no functions.

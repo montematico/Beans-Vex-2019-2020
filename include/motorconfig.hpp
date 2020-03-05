@@ -24,6 +24,7 @@ pros::ADIDigitalIn Dlimit (8);
 pros::ADIUltrasonic Rsense(3,4);
 pros::ADIUltrasonic Lsense(5,6);
 pros::ADIUltrasonic Cubesense('A','B');
+pros::ADIDigitalIn clawlimit('C');
 
 //Vision
 pros::Vision vision_sensor (18,E_VISION_ZERO_TOPLEFT);
