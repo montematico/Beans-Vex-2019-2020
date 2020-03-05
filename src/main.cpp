@@ -131,7 +131,14 @@ void opcontrol()
 	controller.rumble("..");
 	util.startup();
 	vision.startup();
-
+	while(true)
+	{
+		if (util.get_value() > 10)
+		{
+			flashLight.set_value(127);
+		} else flashLight.set_value(0);
+		printf("Distance %f\n",util.get_value());
+	}
 	while (true)
 	{
 		//Hands over control of all components to user.

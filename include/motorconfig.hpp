@@ -27,3 +27,8 @@ pros::ADIUltrasonic Cubesense('A','B');
 
 //Vision
 pros::Vision vision_sensor (18,E_VISION_ZERO_TOPLEFT);
+
+
+//Sensing the stupid Cube//Flashlight
+pros::ADIAnalogOut flashLight ('C');
+pros::ADIMotor lightSensor ('E');
