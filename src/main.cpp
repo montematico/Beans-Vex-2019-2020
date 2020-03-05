@@ -97,8 +97,8 @@ void autonomous()
 
 		cantsee:
 		vision.turncube();
-		if(!vision.gocube()) goto cantsee; //GOcube calls on turcube if it detects error is too large.
-
+		//if(!vision.gocube()) goto cantsee; //GOcube calls on turcube if it detects error is too large.
+		chassis->moveDistance(5_in);
 		lift.move(-30);
 		pros::Task::delay(500);
 		claw.close();
