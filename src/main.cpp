@@ -94,15 +94,13 @@ void autonomous()
 		claw.open();
 		pros::Task::delay(500);
 		claw.stop();
-
-		cantsee:
-		vision.turncube();
-		//if(!vision.gocube()) goto cantsee; //GOcube calls on turcube if it detects error is too large.
-		chassis->moveDistance(5_in);
+		lift.move(30);
+		if(vision.turngo())
+		{
+			lift.move(30);
+			claw.close();
+		}
 		lift.move(-30);
-		pros::Task::delay(500);
-		claw.close();
-		lift.move(50);
 		pros::Task::delay(1000);
 		lift.stop();
 	}
@@ -132,7 +130,14 @@ void opcontrol()
 	util.startup();
 	vision.startup();
 
-	while(true) claw.Csense(true);
+	while(true)
+	{
+		drive.gofw(0.5,100); //Deploys claw but leaping forward then stopping
+		claw.open();
+		pros::Task::delay(500);
+		claw.stop();
+		vision.turncube(false, true);
+	}
 	while (true)
 	{
 		//Hands over control of all components to user.

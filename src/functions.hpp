@@ -273,7 +273,7 @@ public:
   }
 
   //Turns to find a cube until error is below and allowed limit
-  bool turncube(bool debug = false,bool going = false)
+  bool turncube(bool debug = false)
   {
     //setting a bunch of variables to their appropiate defaults and initializing OKAPI
   //auto chassis = ChassisControllerBuilder().withMotors(6,-9,-8,7).withDimensions(AbstractMotor::gearset::green, {{4_in, 18_in}, imev5GreenTPR}).withMaxVelocity(100).withOdometry().buildOdometry();
@@ -298,21 +298,7 @@ public:
       float prevError = error;
       float derivative = error - prevError;
       float power = error*tuner.at("KP") + integral*tuner.at("KI") + derivative*tuner.at("KD");
-
-      if(going)
-      {
-        debug = true;
-        if (error < 5)
-        {
-          this->gofw(50);
-          if(this->Csense())
-          {
-            this->stop();
-            this->close();
-            return true;
-          }
-        }
-      }
+      printf("turning");
       if(!debug)
       {
         if (error <= 5)
@@ -334,6 +320,47 @@ public:
     turnFluke:
     printf("Error:%f, Power: %f\n",error,power);
     pros::Task::delay(15);
+    }
+  }
+  bool turngo(bool debug = false)
+  {
+    //setting a bunch of variables to their appropiate defaults and initializing OKAPI
+  //auto chassis = ChassisControllerBuilder().withMotors(6,-9,-8,7).withDimensions(AbstractMotor::gearset::green, {{4_in, 18_in}, imev5GreenTPR}).withMaxVelocity(100).withOdometry().buildOdometry();
+    cube = vision_sensor.get_by_size(0);
+    coord [0] = cube.x_middle_coord;
+    coord [1] = cube.y_middle_coord;
+    std::map<std::string,float> tuner = {{"KP",0.7}, {"KI", 0}, {"KD", 0.5}}; //A bunch of PID tuning varaibles. its a MAP because im stupid
+    printf("x:%d y:%d \n",cube.x_middle_coord, cube.y_middle_coord);
+
+    while(true) //Change second value to make more or less precice before exiting loop
+    {
+      //Gets the nth largest object the camera sees and saves it to the coord array
+      cube = vision_sensor.get_by_size(0);
+      coord [0] = cube.x_middle_coord;
+      coord [1] = cube.y_middle_coord;
+      printf("x:%d y:%d \n",coord[0], coord[1]);
+
+      //Calculates all the values for the PID loop
+      error = 158 - coord[0];
+      float integral = integral + error;
+      if (error <= 10 || fabs(error) >= 300) integral = 0;
+      float prevError = error;
+      float derivative = error - prevError;
+      float power = error*tuner.at("KP") + integral*tuner.at("KI") + derivative*tuner.at("KD");
+      printf("turning");
+
+      if(error < 5)
+      {
+        if(!this->Csense())
+        {
+          return true;
+        } else
+        {
+          this->gofw(50);
+        }
+      }
+      printf("Error:%f, Power: %f\n",error,power);
+      pros::Task::delay(15);
     }
   }
   bool gocube(bool debug = false) //Should measure distance to cube and go pick it up.
